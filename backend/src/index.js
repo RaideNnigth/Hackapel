@@ -1,7 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { testConnection } from "./db.js";
+import authRoutes from "./routes/authRoutes.js";
+import { testConnection } from "./config/database.js";
+import sequelize from "./config/database.js";
+import "./models/User.js"; // garante que o model é registrado
 
 dotenv.config();
 
@@ -11,18 +14,16 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Basic test route
 app.get("/", (req, res) => {
   res.json({ message: "Hackapel backend is running" });
 });
 
-// Health check + PostgreSQL test
 app.get("/api/health", async (req, res) => {
   try {
-    const now = await testConnection();
+    await testConnection();
     res.json({
       status: "ok",
-      database_time: now,
+      message: "Connected to PostgreSQL via Sequelize",
     });
   } catch (err) {
     res.status(500).json({
@@ -32,6 +33,20 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`);
-});
+// MVC routes
+app.use("/api/auth", authRoutes);
+
+// Start server after DB sync
+async function start() {
+  try {
+    await testConnection();
+    await sequelize.sync(); // para dev: cria/ajusta tabelas (cuidado em prod)
+    app.listen(PORT, () => {
+      console.log(`Backend running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error("Failed to start server:", err);
+  }
+}
+
+start();
