@@ -15,4 +15,7 @@ router.get("/me", authMiddleware, (req, res) => {
   });
 });
 
+// Private route - only ADMIN can create users
+router.post("/auth/registerUser", authMiddleware, registerUser);
+
 export default router;

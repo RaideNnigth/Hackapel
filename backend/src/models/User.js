@@ -29,6 +29,7 @@ const User = sequelize.define(
       allowNull: false,
     },
 
+    // Is used for most users beside UBS and Hospital/Lab
     cpf: {
       type: DataTypes.STRING(11),
       allowNull: false,
@@ -37,6 +38,16 @@ const User = sequelize.define(
         isNumeric: true,
         len: [11, 11],
       },
+    },
+
+    // Is used for UBS and Hospital/Lab users
+    cnes: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true,
+        validate: {
+          isNumeric: true,
+        },
     },
 
     // Cartão Nacional de Saúde
