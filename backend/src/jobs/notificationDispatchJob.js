@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import Notification from "../models/Notification.js";
 import PostToSend from "../models/PostToSend.js";
+import EmailService from "../services/emailService";
 import User from "../models/User.js";
 
 // If you already have a real email service, import it here:
@@ -12,10 +13,15 @@ import User from "../models/User.js";
  */
 async function sendEmail({ to, subject, text, html }) {
   if (!to) throw new Error("Missing recipient email");
-
-  // TODO: replace with real implementation
+  try {
+    EmailService.sendEmail(to, subject, text, html);
+  } catch (e) {
+    console.log("If you dont want this mail to be sent, I had great news!");
+    console.log("Error: while sending mail." + e);
+  }
+  
   console.log(`[EMAIL] Sending email to ${to} | subject="${subject}"`);
-  // Simulate success
+  
   return true;
 }
 
