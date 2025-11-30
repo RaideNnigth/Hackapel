@@ -1,46 +1,74 @@
 import HospitalJournal from "../models/HospitalJournal.js";
 
 /**
- * Create HospitalJournal
+ * Create HospitalJournal entries
+ * 
  * Json body example:
- * {
- *   "prestador": "Clínica VidaBem",
- *   "endereco": "Rua das Flores, 120",
- *   "especialidade": "Cardiologia",
- *   "data": "2025-12-12",
- *   "horario": "14:30",
- *   "nome_profissional": "Dra. Ana Ribeiro"
- * }
+ * [
+ *   {
+ *     "prestador": "Clínica VidaBem",
+ *     "endereco": "Rua das Flores, 120",
+ *     "especialidade": "Cardiologia",
+ *     "data": "2025-12-12",
+ *     "horario": "14:30",
+ *     "nome_profissional": "Dra. Ana Ribeiro"
+ *   },
+ *   {
+ *     "prestador": "Hospital Central",
+ *     "endereco": "Av. Brasil, 955",
+ *     "especialidade": "Ortopedia",
+ *     "data": "2025-12-13",
+ *     "horario": "09:00",
+ *     "nome_profissional": "Dr. Pedro Almeida"
+ *   }
+ * ]
  */
 export const createHospitalJournal = async (req, res) => {
   try {
-    const {
-      prestador,
-      endereco,
-      especialidade,
-      data,
-      horario,
-      nome_profissional,
-    } = req.body;
+    const payload = req.body;
 
-    // Required fields
-    if (!prestador || !endereco || !especialidade || !data || !horario || !nome_profissional) {
+    // Must be an array
+    if (!Array.isArray(payload)) {
       return res.status(400).json({
-        message:
-          "Mandatory fields: prestador, endereco, especialidade, data, horario, nome_profissional",
+        message: "Request body must be an array of HospitalJournal objects.",
       });
     }
 
-    const HospitalJournal = await HospitalJournal.create({
-      prestador,
-      endereco,
-      especialidade,
-      data,
-      horario,
-      nome_profissional,
+    // Validate each item
+    for (const entry of payload) {
+      const {
+        prestador,
+        endereco,
+        especialidade,
+        data,
+        horario,
+        nome_profissional,
+      } = entry;
+
+      if (
+        !prestador ||
+        !endereco ||
+        !especialidade ||
+        !data ||
+        !horario ||
+        !nome_profissional
+      ) {
+        return res.status(400).json({
+          message:
+            "Each item must include: prestador, endereco, especialidade, data, horario, nome_profissional",
+        });
+      }
+    }
+
+    // Bulk creation
+    const created = await HospitalJournal.bulkCreate(payload, {
+      returning: true,
     });
 
-    return res.status(201).json(HospitalJournal);
+    return res.status(201).json({
+      message: "HospitalJournal entries created successfully.",
+      records: created,
+    });
   } catch (err) {
     console.error("Error creating HospitalJournal:", err);
     return res.status(500).json({
