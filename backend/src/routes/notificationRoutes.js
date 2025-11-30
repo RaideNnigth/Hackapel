@@ -1,31 +1,71 @@
-// routes/notificationRoutes.js
 import { Router } from "express";
 
 import {
   createNotification,
   getNotifications,
-  getNotificationById,
-  updateNotificationStatus,
-  deleteNotification
+  getNotificationByCPF,
+  updateScheduleStatus,
+  deleteNotification,
 } from "../controllers/notificationController.js";
 
 import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { requireRoles } from "../middlewares/roleMiddleware.js";
 
 const router = Router();
 
-// Criar notificação
-router.post("/", authMiddleware, createNotification);
+/**
+ * Create a new notification
+ * Allowed roles: ADMIN, OFICIAL ADMINISTRATIVO
+ */
+router.post(
+  "/",
+  authMiddleware,
+  requireRoles("ADMIN", "OFICIAL ADMINISTRATIVO"),
+  createNotification
+);
 
-// Listar todas as notificações
-router.get("/", authMiddleware, getNotifications);
+/**
+ * List all notifications
+ * Allowed roles: ADMIN, OFICIAL ADMINISTRATIVO
+ */
+router.get(
+  "/",
+  authMiddleware,
+  requireRoles("ADMIN", "OFICIAL ADMINISTRATIVO"),
+  getNotifications
+);
 
-// Obter notificação por ID
-router.get("/:id", authMiddleware, getNotificationById);
+/**
+ * Get a notification by ID
+ * Allowed roles: ADMIN, UBS, HOSPITAL/LAB
+ * (PACIENTE access can be added if needed)
+ */
+router.get(
+  "/:cpf",
+  authMiddleware,
+  getNotificationByCPF
+);
 
-// Atualizar apenas o status da notificação
-router.patch("/:id/status", authMiddleware, updateNotificationStatus);
+/**
+ * Update the schedule status of a notification
+ * Allowed roles: ADMIN, UBS, HOSPITAL/LAB
+ */
+router.patch(
+  "/:id/status",
+  authMiddleware,
+  requireRoles("ADMIN", "UBS", "HOSPITAL/LAB", "OFICIAL ADMINISTRATIVO"),
+  updateScheduleStatus
+);
 
-// Deletar notificação
-router.delete("/:id", authMiddleware, deleteNotification);
+/**
+ * Delete a notification
+ * Allowed roles: ADMIN only
+ */
+router.delete(
+  "/:id",
+  authMiddleware,
+  requireRoles("ADMIN"),
+  deleteNotification
+);
 
 export default router;

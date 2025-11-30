@@ -1,7 +1,18 @@
 import Notification from "../models/Notification.js";
 
 /**
- * Create a new notification
+ * Create notification
+ * Json body example:
+ * {
+ *   "idGercon": "string",            // Optional
+ *   "consultType": "string",
+ *   "startDateTime": "2024-10-10T10:00:00Z",
+ *   "endDateTime": "2024-10-10T11:00:00Z",
+ *   "cpf": "string",                 // Mandatory
+ *   "medicName": "string",
+ *   "especiality": "string",
+ *   "scheduleStatus": "string"       // Mandatory
+ * }
  */
 export const createNotification = async (req, res) => {
   try {
@@ -16,17 +27,17 @@ export const createNotification = async (req, res) => {
       scheduleStatus,
     } = req.body;
 
-    if (!idGercon || !cpf || !scheduleStatus) {
+    if (!cpf || !scheduleStatus) {
       return res.status(400).json({
-        message: "Campos obrigatórios: idGercon, cpf, scheduleStatus",
+        message: "Mandatory fields: cpf, scheduleStatus",
       });
     }
 
     const notification = await Notification.create({
       idGercon,
       consultType,
-      startDateTime,
-      endDateTime,
+      startDateTime: startDateTime ? new Date(startDateTime) : null,
+      endDateTime: endDateTime ? new Date(endDateTime) : null,
       cpf,
       medicName,
       especiality,
@@ -35,16 +46,17 @@ export const createNotification = async (req, res) => {
 
     return res.status(201).json(notification);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      message: "Erro ao criar notificação",
+    console.error("Error creating notification:", err);
+
+    return res.status(500).json({
+      message: "Error creating notification",
       error: err.message,
     });
   }
 };
 
 /**
- * Listar todas as notificações
+ * List all notifications, used for admin purposes
  */
 export const getNotifications = async (req, res) => {
   try {
@@ -52,46 +64,53 @@ export const getNotifications = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
-    res.json(notifications);
+    return res.json(notifications);
   } catch (err) {
-    res.status(500).json({
-      message: "Erro ao buscar notificações",
+    console.error("Error searching for notifications:", err);
+    return res.status(500).json({
+      message: "Error searching for notifications:",
       error: err.message,
     });
   }
 };
 
 /**
- * Buscar por ID
+ * Get notification by CPF
+ * Example Json:
+ * {
+ *  "cpf": "12345678900"
+ * }
  */
-export const getNotificationById = async (req, res) => {
+export const getNotificationByCPF = async (req, res) => {
   try {
-    const notification = await Notification.findByPk(req.params.id);
+    const { cpf } = req.params;
+    const notification = await Notification.findOne({ where: { cpf } });
 
     if (!notification) {
-      return res.status(404).json({ message: "Notificação não encontrada" });
+      return res.status(404).json({ message: "Notification not found" });
     }
 
-    res.json(notification);
+    return res.json(notification);
   } catch (err) {
-    res.status(500).json({
-      message: "Erro ao buscar notificação",
+    console.error("Error searching for notification:", err);
+    return res.status(500).json({
+      message: "Error searching for notification:",
       error: err.message,
     });
   }
 };
 
 /**
- * Atualizar apenas o status da notificação
+ * Update scheduleStatus of a notification
  */
-export const updateNotificationStatus = async (req, res) => {
+export const updateScheduleStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { scheduleStatus } = req.body;
 
     if (!scheduleStatus) {
       return res.status(400).json({
-        message: "O campo scheduleStatus é obrigatório.",
+        message: "The field scheduleStatus is mandatory.",
       });
     }
 
@@ -99,45 +118,43 @@ export const updateNotificationStatus = async (req, res) => {
 
     if (!notification) {
       return res.status(404).json({
-        message: "Notificação não encontrada.",
+        message: "Notification not found.",
       });
     }
 
     notification.scheduleStatus = scheduleStatus;
-
     await notification.save();
 
     return res.json({
-      message: "Status atualizado com sucesso.",
+      message: "scheduleStatus updated successfully.",
       notification,
     });
-
   } catch (err) {
-    console.error("Erro ao atualizar status:", err);
-    res.status(500).json({
-      message: "Erro ao atualizar status",
+    console.error("Error updating scheduleStatus:", err);
+    return res.status(500).json({
+      message: "Error updating scheduleStatus",
       error: err.message,
     });
   }
 };
 
 /**
- * Deletar notificação
+ * Delete notification by ID
  */
 export const deleteNotification = async (req, res) => {
   try {
-    const deleted = await Notification.destroy({
-      where: { id: req.params.id },
-    });
+    const { id } = req.params;
+    const deleted = await Notification.destroy({ where: { id } });
 
     if (!deleted) {
-      return res.status(404).json({ message: "Notificação não encontrada" });
+      return res.status(404).json({ message: "Notification not found" });
     }
 
-    res.json({ message: "Notificação removida com sucesso" });
+    return res.json({ message: "Notification removed successfully" });
   } catch (err) {
-    res.status(500).json({
-      message: "Erro ao deletar notificação",
+    console.error("Error deleting notification:", err);
+    return res.status(500).json({
+      message: "Error deleting notification",
       error: err.message,
     });
   }

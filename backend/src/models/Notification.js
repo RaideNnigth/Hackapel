@@ -14,7 +14,7 @@ const Notification = sequelize.define(
     idGercon: {
       type: DataTypes.BIGINT, // ou DataTypes.DECIMAL(19, 0)
       unique: true,
-      allowNull: false,
+      allowNull: true,
       field: "id_gercon", // opcional: nome da coluna no banco
     },
 
