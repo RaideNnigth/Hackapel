@@ -25,8 +25,8 @@ export default function App() {
         
         <Route path="/planilha" element={<CriarPlanilha />} />
 
-        <Route path="/ofc-admin/agendas" element={<OfcAdminAgendas />} />
         <Route path="/ofc-admin/dashboard" element={<OficialAdministrativoDashboard />} />
+        <Route path="/ofc-admin/agendas" element={<OfcAdminAgendas />} />
         <Route path="/ofc-admin/confirmacoes" element={<OfcAdminConsultas />} />
         
         <Route path="/patient/dashboard" element={<PatientDashboard />} />

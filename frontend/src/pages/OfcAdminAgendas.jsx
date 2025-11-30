@@ -40,7 +40,7 @@ export default function OfcAdminAgendas() {
 
   return (
     <div className="container">
-      <h2>Painel do Administrador</h2>
+      <h2>PeloSUS - Painel do Oficial Administrador</h2>
       <p>Gerencie as agendas enviadas pelos hospitais</p>
 
       <div className="cards-row">
