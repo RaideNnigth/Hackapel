@@ -1,11 +1,13 @@
 // src/pages/AdminLogin.jsx
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import api from "../api_helper.js";
 
 export default function AdminLogin() {
   const [cpf, setCpf] = useState("");
   const [senha, setSenha] = useState("");
+  const navigate = useNavigate();
 
   const login_btn = async (e) => {
     e.preventDefault();
@@ -24,9 +26,7 @@ export default function AdminLogin() {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
-      // Por hora, printar no console infos do user
-      console.log('Logged in user:', user);
-      console.log('Token:', token);
+      navigate("/admin/dashboard");
     }
     catch (error) {
       console.error("Login failed", error);
