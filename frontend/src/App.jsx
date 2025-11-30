@@ -5,6 +5,7 @@ import CriarPlanilha from "./pages/CriarPlanilha";
 import AdminAgendas from "./pages/AdminAgendas";
 import OficialAdministrativoDashboard from "./pages/OficialAdministrativoDashboard";
 import AdminConsultas from "./pages/AdminConsultas";
+import PatientDashboard from "./pages/PatientDashboard";
 
 export default function App() {
   return (
@@ -12,10 +13,11 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/admin-login" element={<AdminLogin />} />
-         <Route path="/planilha" element={<CriarPlanilha />} />
-         <Route path="/admin-agendas" element={<AdminAgendas />} />
-          <Route path="/admin/dashboard" element={<OficialAdministrativoDashboard />} />
-          <Route path="/admin-confirmacoes" element={<AdminConsultas />} />
+        <Route path="/planilha" element={<CriarPlanilha />} />
+        <Route path="/admin-agendas" element={<AdminAgendas />} />
+        <Route path="/admin/dashboard" element={<OficialAdministrativoDashboard />} />
+        <Route path="/admin-confirmacoes" element={<AdminConsultas />} />
+        <Route path="/patient/dashboard" element={<PatientDashboard />} />
       </Routes>
     </BrowserRouter>
   );
