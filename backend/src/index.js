@@ -9,7 +9,7 @@ import telegramRoutes from './routes/telegramRoutes.js';
 import { testConnection } from "./config/database.js";
 import sequelize from "./config/database.js";
 import pelotasInformesRouter from "./routes/pelotasInformesRoutes.js";
-
+import webhookRoutes from "./routes/webhookRoutes.js";
 import { syncPelotasInformesToPosts } from "./jobs/pelotasInformesSync.js";
 import { runNotificationDispatchJob  } from "./jobs/notificationDispatchJob.js";
 
@@ -47,6 +47,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/notification", notificationRotes);
 app.use("/api/posts-to-send", postToSendRoutes);
 app.use("/api/telegram", telegramRoutes);
+app.use("/api", webhookRoutes);
 
 // Start server after DB sync
 async function start() {
