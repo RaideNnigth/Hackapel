@@ -41,19 +41,16 @@ export default function Login() {
       if (tipo === "Paciente") {
         navigate('/patient/dashboard');
       }
-
       else if (tipo === "Oficial Administrativo (CPF)") {
         navigate('/ofc-admin/dashboard');
       }
+      else if (tipo === "Hospital/Laboratório (CNES)") {
+        navigate('/planilha');
+      }
+      else if (tipo === "UBS (CNES)") {
+        navigate('/ubs/dashboard');
+      }
 
-      // else if (tipo === "Hospital/Laboratório (CNES)") {
-      //   navigate('/hospital/dashboard');
-      // }
-
-      // else if (tipo === "UBS (CNES)") {
-      //   navigate('/ubs/dashboard');
-      // }
-      
     }
     catch (error) {
       console.error("Login failed", error);
