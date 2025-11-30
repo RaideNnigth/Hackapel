@@ -7,6 +7,8 @@ import OficialAdministrativoDashboard from "./pages/OficialAdministrativoDashboa
 import OfcAdminConsultas from "./pages/OfcAdminConsultas";
 import PatientDashboard from "./pages/PatientDashboard";
 import PatientAppointments from "./pages/PatientAppointments";
+import PatientNewsletter from "./pages/PatientNewsletter";
+import PatientUpdate from "./pages/PatientUpdate";
 import AdminDashboard from "./pages/AdminDashboard";
 
 export default function App() {
@@ -23,6 +25,8 @@ export default function App() {
         
         <Route path="/patient/dashboard" element={<PatientDashboard />} />
         <Route path="/patient/appointments" element={<PatientAppointments />} />
+        <Route path="/patient/newsletter" element={<PatientNewsletter />} />
+        <Route path="/patient/update" element={<PatientUpdate />} />
         
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>

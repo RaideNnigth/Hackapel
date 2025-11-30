@@ -31,14 +31,14 @@ const PatientDashboard = () => {
       description: "Acompanhe eventos da Secretaria de Saúde",
       icon: <Newspaper className="w-6 h-6 text-purple-600" />,
       buttonText: "Acessar",
-      link: "/patient/news",
+      link: "/patient/newsletter",
     },
     {
       title: "Atualizar Dados",
       description: "Atualize telefone, email e endereço",
       icon: <UserCog className="w-6 h-6 text-orange-600" />,
       buttonText: "Acessar",
-      link: "/patient/profile",
+      link: "/patient/update",
     },
   ];
 
