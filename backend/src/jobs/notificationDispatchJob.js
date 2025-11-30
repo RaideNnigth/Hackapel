@@ -4,25 +4,19 @@ import PostToSend from "../models/PostToSend.js";
 import { EmailService } from "../services/emailService.js";
 import User from "../models/User.js";
 
-// If you already have a real email service, import it here:
-// import { sendEmail } from "../services/emailService.js";
 
-/**
- * Placeholder for email sending.
- * Replace with your real implementation (e.g. Nodemailer, SES, etc).
- */
 async function sendEmail({ to, subject, text, html }) {
   if (!to) throw new Error("Missing recipient email");
+
   try {
-    EmailService.sendEmail(to, subject, text, html);
+    await EmailService({ to, subject, text, html });
+    console.log(`[EMAIL] Sending email to ${to} | subject="${subject}"`);
+    return true;
   } catch (e) {
     console.log("If you dont want this mail to be sent, I had great news!");
-    console.log("Error: while sending mail." + e);
+    console.log("Error while sending mail:", e);
+    return false;
   }
-  
-  console.log(`[EMAIL] Sending email to ${to} | subject="${subject}"`);
-  
-  return true;
 }
 
 /**
@@ -292,19 +286,3 @@ export async function runNotificationDispatchJob() {
   console.log("[JOB] NotificationDispatchJob finished.");
 }
 
-/**
- * Starts a periodic scheduler that runs the job every 30 minutes.
- */
-export function startNotificationDispatchScheduler() {
-  const THIRTY_MINUTES = 30 * 60 * 1000;
-
-  runNotificationDispatchJob();
-
-  setInterval(() => {
-    runNotificationDispatchJob();
-  }, THIRTY_MINUTES);
-
-  console.log(
-    "[JOB] NotificationDispatchJob scheduler started (every 30 minutes)."
-  );
-}

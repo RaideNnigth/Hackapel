@@ -95,7 +95,9 @@ export async function fetchPelotasInformes() {
       }
     );
 
-    // ⭐ AQUI é o que estava faltando antes
+    // Cut just to 3 elements for testing purposes
+    informes.splice(3);
+    
     return informes;
   } catch (error) {
     console.error("Erro ao buscar informes de Pelotas:", error);

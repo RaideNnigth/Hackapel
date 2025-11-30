@@ -54,9 +54,8 @@ export async function syncPelotasInformesToPosts() {
       postTitle,
       postDescription,
       postBody,
-      postImages: null, // no futuro dá pra tentar pegar imagem do site
+      postImages: null,
       typeOfPost: "informative",
-      // notificationStatus fica como "PENDING" pelo default do modelo
     });
 
     createdPosts.push(newPost);
