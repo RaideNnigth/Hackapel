@@ -42,16 +42,16 @@ export default function Login() {
         navigate('/patient/dashboard');
       }
 
-      // else if (tipo === "Oficial Administrativo (CPF)") {
-      //   redirect('/admin/dashboard');
-      // }
+      else if (tipo === "Oficial Administrativo (CPF)") {
+        navigate('/ofc-admin/dashboard');
+      }
 
       // else if (tipo === "Hospital/Laboratório (CNES)") {
-      //   redirect('/hospital/dashboard');
+      //   navigate('/hospital/dashboard');
       // }
 
       // else if (tipo === "UBS (CNES)") {
-      //   redirect('/ubs/dashboard');
+      //   navigate('/ubs/dashboard');
       // }
       
     }
