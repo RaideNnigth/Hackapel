@@ -6,8 +6,8 @@ services:
     container_name: whatsapp-bot
     environment:
       - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-      - PORT=3000
+      - PORT=2000
     ports:
-      - "3000:3000"   # expõe a API HTTP
+      - "2000:2000"   # expõe a API HTTP
     stdin_open: true
     tty: true

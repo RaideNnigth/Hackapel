@@ -4,6 +4,7 @@ import PostToSend from "../models/PostToSend.js";
 import { EmailService } from "../services/emailService.js";
 import { sendWebPushToUser } from "../services/webPushService.js";
 import User from "../models/User.js";
+import axios from "axios";
 
 
 async function sendEmail({ to, subject, text, html }) {
@@ -30,10 +31,29 @@ async function sendEmail({ to, subject, text, html }) {
 async function sendWhatsApp({ phone, message }) {
   if (!phone) throw new Error("Missing phone number");
 
-  // TODO: replace with real WA integration (respecting ToS)
-  console.log(`[WHATSAPP] Sending WhatsApp to ${phone} | message="${message}"`);
-  // Simulate success
-  return true;
+  const BOT_URL = process.env.WHATSAPP_BOT_URL || "http://localhost:2000";
+
+  try {
+    const payload = {
+      number: phone,
+      message: message,
+    };
+
+    const response = await axios.post(`${BOT_URL}/send-message`, payload);
+
+    console.log(
+      `[WHATSAPP] Mensagem enviada pelo bot | phone=${phone} | message="${message}" | resposta=`,
+      response.data
+    );
+
+    return true;
+  } catch (err) {
+    console.error(
+      `[WHATSAPP] Erro ao enviar mensagem para ${phone}:`,
+      err?.response?.data || err.message
+    );
+    return false;
+  }
 }
 
 async function sendWebPush({ userId, title, body }) {
@@ -284,4 +304,3 @@ export async function runNotificationDispatchJob() {
 
   console.log("[JOB] NotificationDispatchJob finished.");
 }
-

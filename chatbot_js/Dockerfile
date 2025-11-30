@@ -19,7 +19,7 @@ RUN npm install
 COPY . .
 
 # Expõe a porta da API do chatbot
-EXPOSE 3000
+EXPOSE 2000
 
 # Comando padrão
 CMD ["npm", "start"]
