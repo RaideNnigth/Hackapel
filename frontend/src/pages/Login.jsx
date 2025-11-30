@@ -1,12 +1,13 @@
 // src/pages/Login.jsx
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api_helper.js";
 
 export default function Login() {
   const [tipo, setTipo] = useState("Paciente");
   const [identificador, setIdentificador] = useState("");
   const [senha, setSenha] = useState("");
+  const navigate = useNavigate();
 
   // Checar se o tipo usa CPF ou CNES
   const placeholder =
@@ -36,9 +37,23 @@ export default function Login() {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
-      // Por hora, printar no console infos do user
-      console.log('Logged in user:', user);
-      console.log('Token:', token);
+      // Redirecionar com base no tipo de usuário
+      if (tipo === "Paciente") {
+        navigate('/patient/dashboard');
+      }
+
+      else if (tipo === "Oficial Administrativo (CPF)") {
+        navigate('/ofc-admin/dashboard');
+      }
+
+      // else if (tipo === "Hospital/Laboratório (CNES)") {
+      //   navigate('/hospital/dashboard');
+      // }
+
+      // else if (tipo === "UBS (CNES)") {
+      //   navigate('/ubs/dashboard');
+      // }
+      
     }
     catch (error) {
       console.error("Login failed", error);

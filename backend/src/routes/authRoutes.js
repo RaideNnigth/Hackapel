@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   login,
+  loginAdmin,
   registerUser,
   registerPaciente,
 } from "../controllers/authController.js";
@@ -11,6 +12,7 @@ const router = Router();
 
 // Public routes
 router.post("/login", login);
+router.post("/loginAdmin", loginAdmin);
 router.post("/registerPaciente", registerPaciente);
 
 // Authenticated route - get current user info

@@ -101,6 +101,56 @@ export async function login(req, res) {
 }
 
 // --------------------------------------------------------
+// POST /auth/loginAdmin
+// Body exemplos:
+//   ADMIN:   { cpf: "12345678901", password: "..." }
+// --------------------------------------------------------
+export async function loginAdmin(req, res) {
+  const { cpf, password } = req.body;
+
+  if (!password || !cpf) {
+    return res.status(400).json({
+      message: "Password and CPF are required",
+    });
+  }
+
+  try {
+    const user = await User.findOne({ where: { cpf, role: "ADMIN" } });
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    if (!user.is_active) {
+      return res.status(403).json({ message: "User is inactive" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = generateToken(user);
+
+    return res.json({
+      token,
+      expiresIn: JWT_EXPIRES_IN,
+      user: {
+        id: user.id,
+        full_name: user.full_name,
+        role: user.role,
+        cpf: user.cpf,
+        cnes: user.cnes,
+      },
+    });
+  } catch (err) {
+    console.error("[AUTH LOGIN ERROR]", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+
+// --------------------------------------------------------
 // POST /auth/registerPaciente
 // Body exemplo:
 // {
