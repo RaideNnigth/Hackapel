@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import notificationRotes from "./routes/notificationRoutes.js"
 import postToSendRoutes from "./routes/postToSendRoutes.js";
+import telegramRoutes from './routes/telegramRoutes.js';
 import { testConnection } from "./config/database.js";
 import sequelize from "./config/database.js";
 import pelotasInformesRouter from "./routes/pelotasInformesRoutes.js";
@@ -45,8 +46,7 @@ app.get("/api/health", async (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/notification", notificationRotes);
 app.use("/api/posts-to-send", postToSendRoutes);
-app.use("/api", pelotasInformesRouter);
-
+app.use("/api/telegram", telegramRoutes);
 
 // Start server after DB sync
 async function start() {

@@ -10,6 +10,7 @@ import PatientAppointments from "./pages/PatientAppointments";
 import PatientNewsletter from "./pages/PatientNewsletter";
 import PatientUpdate from "./pages/PatientUpdate";
 import AdminDashboard from "./pages/AdminDashboard";
+import PatientRegistration from "./pages/PatientRegistration";
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/patient/update" element={<PatientUpdate />} />
         
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/patient/registration" element={<PatientRegistration />} />
       </Routes>
     </BrowserRouter>
   );

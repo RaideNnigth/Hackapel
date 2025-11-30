@@ -299,31 +299,8 @@ export default function AdminDashboard() {
                 >
                   Atendimentos
                 </button>
-                <button
-                  className={`sub-tab ${
-                    kpiTab === "distribuicao" ? "active" : ""
-                  }`}
-                  onClick={() => setKpiTab("distribuicao")}
-                >
-                  Distribuição
-                </button>
-                <button
-                  className={`sub-tab ${kpiTab === "ocupacao" ? "active" : ""}`}
-                  onClick={() => setKpiTab("ocupacao")}
-                >
-                  Ocupação
-                </button>
-                <button
-                  className={`sub-tab ${kpiTab === "espera" ? "active" : ""}`}
-                  onClick={() => setKpiTab("espera")}
-                >
-                  Tempo de Espera
-                </button>
               </div>
             </div>
-
-            {/* Por enquanto, o gráfico é igual para todos os sub-tabs.
-                Você pode mudar os dados conforme o tab depois. */}
             <div className="chart-card">
               <div className="chart-header">
                 <h3>Atendimentos Mensais</h3>
