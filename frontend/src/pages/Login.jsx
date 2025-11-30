@@ -1,6 +1,7 @@
 // src/pages/Login.jsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import api from "../api_helper.js";
 
 export default function Login() {
   const [tipo, setTipo] = useState("Paciente");
@@ -12,6 +13,39 @@ export default function Login() {
     tipo === "Hospital/Laboratório (CNES)" || tipo === "UBS (CNES)"
       ? "Digite o CNES"
       : "Digite o CPF (000.000.000-00)";
+
+  const param_name =
+    tipo === "Hospital/Laboratório (CNES)" || tipo === "UBS (CNES)"
+      ? "cnes"
+      : "cpf";
+
+  const login_btn = async (e) => {
+    e.preventDefault();
+
+    try {
+      const body = {
+        password: senha,
+      };
+      body[param_name] = identificador;
+
+      const response = await api.post('api/auth/login', body);
+
+      const { token, user } = response.data;
+
+      // Salvar token no localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Por hora, printar no console infos do user
+      console.log('Logged in user:', user);
+      console.log('Token:', token);
+    }
+    catch (error) {
+      console.error("Login failed", error);
+      alert("Invalid credentials");
+    }
+  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4">
@@ -75,7 +109,10 @@ export default function Login() {
           className="w-full mt-1 mb-6 p-3 border rounded-lg bg-gray-100"
         />
 
-        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition">
+        <button
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+          onClick={login_btn}
+        >
           Entrar
         </button>
 
