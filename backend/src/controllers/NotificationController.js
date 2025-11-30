@@ -1,4 +1,3 @@
-// controllers/notificationController.js
 import Notification from "../models/Notification.js";
 
 /**
@@ -77,6 +76,46 @@ export const getNotificationById = async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: "Erro ao buscar notificação",
+      error: err.message,
+    });
+  }
+};
+
+/**
+ * Atualizar apenas o status da notificação
+ */
+export const updateNotificationStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { scheduleStatus } = req.body;
+
+    if (!scheduleStatus) {
+      return res.status(400).json({
+        message: "O campo scheduleStatus é obrigatório.",
+      });
+    }
+
+    const notification = await Notification.findByPk(id);
+
+    if (!notification) {
+      return res.status(404).json({
+        message: "Notificação não encontrada.",
+      });
+    }
+
+    notification.scheduleStatus = scheduleStatus;
+
+    await notification.save();
+
+    return res.json({
+      message: "Status atualizado com sucesso.",
+      notification,
+    });
+
+  } catch (err) {
+    console.error("Erro ao atualizar status:", err);
+    res.status(500).json({
+      message: "Erro ao atualizar status",
       error: err.message,
     });
   }
