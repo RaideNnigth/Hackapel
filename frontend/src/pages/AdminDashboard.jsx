@@ -9,21 +9,78 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 
+// --- DADOS FICTÍCIOS BASEADOS EM PELOTAS/RS ---
+
+// 1. Hospitais/Laboratórios que mais fornecem vagas (Top 5)
+const vacanciesData = [
+  { name: "Hosp. Escola UFPel", vagas: 1250 },
+  { name: "Santa Casa Pelotas", vagas: 980 },
+  { name: "Hosp. Beneficência", vagas: 850 },
+  { name: "Lab. Exame Sul", vagas: 600 },
+  { name: "UBS Fragata", vagas: 450 },
+];
+
+// 2. Status das Consultas (Para ver abstensão)
+const appointmentStatusData = [
+  { name: "Realizadas", value: 6500 },
+  { name: "Canceladas (Prévio)", value: 1200 },
+  { name: "Absenteísmo (Faltas)", value: 2100 }, // Faltou sem avisar
+];
+
+// Cores para o gráfico de pizza
+const COLORS_STATUS = ["#10B981", "#F59E0B", "#EF4444"]; // Verde, Laranja, Vermelho
+
+// 3. Demografia de QUEM FALTOU (Absenteísmo)
+// 3a. Gênero
+const absenteeGenderData = [
+  { name: "Mulheres", value: 62 },
+  { name: "Homens", value: 38 },
+];
+// 3b. Faixa Etária
+const absenteeAgeData = [
+  { name: "0-18", value: 10 },
+  { name: "19-39", value: 45 }, // Jovens adultos/trabalhadores (maior taxa fictícia)
+  { name: "40-59", value: 25 },
+  { name: "60+", value: 20 },
+];
+// 3c. Bairros de Pelotas
+const absenteeNeighborhoodData = [
+  { name: "Fragata", value: 35 },
+  { name: "Três Vendas", value: 25 },
+  { name: "Areal", value: 20 },
+  { name: "Centro", value: 15 },
+  { name: "Laranjal", value: 5 },
+];
+
+// 4. Especialistas Mais Procurados
+const demandSpecialistsData = [
+  { name: "Clínico Geral", solicitacoes: 3200 },
+  { name: "Cardiologista", solicitacoes: 2100 },
+  { name: "Oftalmologista", solicitacoes: 1800 },
+  { name: "Dermatologista", solicitacoes: 1500 },
+  { name: "Ginecologista", solicitacoes: 1200 },
+  { name: "Pediatra", solicitacoes: 950 },
+];
+
+// Dados existentes (mantidos e ajustados)
 const ubsData = [
   {
     id: 1,
     nome: "UBS Vila Nova",
-    endereco: "Rua das Flores, 123",
-    telefone: "(11) 3456-7890",
+    endereco: "Rua Santa Cruz, 123 - Três Vendas",
+    telefone: "(53) 3225-7890",
     responsavel: "Dr. João Silva",
   },
   {
     id: 2,
-    nome: "UBS Centro",
-    endereco: "Av. Principal, 456",
-    telefone: "(11) 3456-7891",
+    nome: "UBS Navegantes",
+    endereco: "Rua Darcy Vargas, 456 - Porto",
+    telefone: "(53) 3222-7891",
     responsavel: "Dra. Maria Santos",
   },
 ];
@@ -31,19 +88,19 @@ const ubsData = [
 const hospitaisData = [
   {
     id: 1,
-    nome: "Hospital São Paulo",
+    nome: "Hospital Escola UFPel",
     tipo: "Hospital",
-    endereco: "Av. Paulista, 1000",
-    telefone: "(11) 3000-0000",
-    especialidades: "Cardiologia, Neurologia, Ortopedia",
+    endereco: "R. Prof. Araújo, 538 - Centro",
+    telefone: "(53) 3284-4900",
+    especialidades: "Geral, Oncologia, Maternidade",
   },
   {
     id: 2,
-    nome: "Laboratório Vida",
+    nome: "Laboratório Antonello",
     tipo: "Laboratório",
-    endereco: "Rua da Saúde, 200",
-    telefone: "(11) 3111-1111",
-    especialidades: "Análises Clínicas, Exames de Imagem",
+    endereco: "R. 15 de Novembro, 600 - Centro",
+    telefone: "(53) 3222-1111",
+    especialidades: "Análises Clínicas",
   },
 ];
 
@@ -51,63 +108,46 @@ const oficiaisData = [
   {
     id: 1,
     nome: "Carlos Oliveira",
-    cargo: "Coordenador Administrativo",
-    email: "carlos.oliveira@saude.gov.br",
-    telefone: "(11) 3222-2222",
-    setor: "Gestão de UBS",
-  },
-  {
-    id: 2,
-    nome: "Ana Paula Costa",
-    cargo: "Analista de Dados",
-    email: "ana.costa@saude.gov.br",
-    telefone: "(11) 3222-2223",
-    setor: "Monitoramento e Avaliação",
+    cargo: "Coordenador",
+    email: "carlos.pref@pelotas.rs.gov.br",
+    telefone: "(53) 99999-2222",
+    setor: "Gestão UBS",
   },
 ];
 
 const kpiCards = [
   {
-    titulo: "Total de Atendimentos",
-    valor: "18.700",
-    subtitulo: "+12.5% em relação ao mês anterior",
+    titulo: "Vagas Ofertadas (Mês)",
+    valor: "4.130",
+    subtitulo: "Hospitais e Laboratórios somados",
   },
   {
-    titulo: "Pacientes Ativos",
-    valor: "12.450",
-    subtitulo: "+8.2% em relação ao mês anterior",
+    titulo: "Taxa de Absenteísmo",
+    valor: "21.4%",
+    subtitulo: "Pacientes que faltaram este mês",
   },
   {
-    titulo: "Unidades Ativas",
-    valor: "24",
-    subtitulo: "8 UBS, 10 Hospitais, 6 Laboratórios",
+    titulo: "Fila de Espera",
+    valor: "1.240",
+    subtitulo: "Aguardando especialista",
   },
   {
-    titulo: "Taxa de Satisfação",
-    valor: "87%",
-    subtitulo: "+3.1% em relação ao mês anterior",
+    titulo: "Satisfação (NPS)",
+    valor: "72",
+    subtitulo: "Zona de Qualidade",
   },
-];
-
-const atendimentosMensais = [
-  { mes: "Jan", total: 2500, consultas: 1800, exames: 700 },
-  { mes: "Fev", total: 2700, consultas: 1950, exames: 750 },
-  { mes: "Mar", total: 3000, consultas: 2100, exames: 800 },
-  { mes: "Abr", total: 2850, consultas: 2000, exames: 850 },
-  { mes: "Mai", total: 3200, consultas: 2300, exames: 900 },
-  { mes: "Jun", total: 3500, consultas: 2500, exames: 950 },
 ];
 
 export default function AdminDashboard() {
   const [mainTab, setMainTab] = useState("administrativo");
   const [adminTab, setAdminTab] = useState("ubs");
-  const [kpiTab, setKpiTab] = useState("atendimentos");
+  const [kpiTab, setKpiTab] = useState("visao-geral"); // Mudei o default para ser mais genérico
 
   return (
     <div className="dash-root">
       <header className="dash-header">
-        <h1>Painel Administrativo - Sistema de Saúde</h1>
-        <p>Gestão e monitoramento de unidades de saúde</p>
+        <h1>Painel Administrativo - Saúde Pelotas</h1>
+        <p>Monitoramento Integrado da Rede Municipal</p>
 
         <div className="dash-main-tabs">
           <button
@@ -124,7 +164,7 @@ export default function AdminDashboard() {
             onClick={() => setMainTab("kpis")}
           >
             <span className="tab-icon">📊</span>
-            KPIs
+            Indicadores (KPIs)
           </button>
         </div>
       </header>
@@ -134,11 +174,8 @@ export default function AdminDashboard() {
           <section className="card">
             <div className="card-header">
               <div>
-                <h2>Gestão Administrativa</h2>
-                <p>
-                  Cadastre e gerencie UBS, Hospitais, Laboratórios e Oficiais
-                  Administrativos
-                </p>
+                <h2>Gestão de Recursos</h2>
+                <p>Gerencie as entidades da rede de saúde de Pelotas</p>
               </div>
             </div>
 
@@ -156,7 +193,7 @@ export default function AdminDashboard() {
                   }`}
                   onClick={() => setAdminTab("hospitais")}
                 >
-                  <span className="tab-icon">🏥</span> Hospitais/Laboratórios
+                  <span className="tab-icon">🏥</span> Hospitais/Labs
                 </button>
                 <button
                   className={`sub-tab ${
@@ -164,21 +201,16 @@ export default function AdminDashboard() {
                   }`}
                   onClick={() => setAdminTab("oficiais")}
                 >
-                  <span className="tab-icon">👥</span> Oficiais Administrativos
+                  <span className="tab-icon">👥</span> Oficiais
                 </button>
               </div>
 
               <button className="primary-btn">
-                +
-                <span>
-                  {adminTab === "ubs" && "Cadastrar UBS"}
-                  {adminTab === "hospitais" && "Cadastrar Hospital/Laboratório"}
-                  {adminTab === "oficiais" &&
-                    "Cadastrar Oficial Administrativo"}
-                </span>
+                +<span>Cadastrar Novo</span>
               </button>
             </div>
 
+            {/* TABELAS (Mantidas do original, apenas dados atualizados) */}
             {adminTab === "ubs" && (
               <table className="dash-table">
                 <thead>
@@ -265,88 +297,161 @@ export default function AdminDashboard() {
             )}
           </section>
         ) : (
-          <section className="card">
-            <div className="card-header">
-              <div>
-                <h2>Indicadores-Chave de Desempenho (KPI)</h2>
-                <p>
-                  Monitore os principais indicadores de desempenho do sistema de
-                  saúde
-                </p>
+          /* ================= SEÇÃO DE KPIS ================= */
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            
+            {/* Cards de Resumo */}
+            <section className="card">
+              <div className="card-header">
+                <h2>Resumo Estratégico</h2>
               </div>
-            </div>
-
-            <div className="kpi-cards">
-              {kpiCards.map((k) => (
-                <div key={k.titulo} className="kpi-card">
-                  <div className="kpi-title-row">
-                    <span className="kpi-title">{k.titulo}</span>
-                    <span className="kpi-mini-icon">↗</span>
+              <div className="kpi-cards">
+                {kpiCards.map((k) => (
+                  <div key={k.titulo} className="kpi-card">
+                    <div className="kpi-title-row">
+                      <span className="kpi-title">{k.titulo}</span>
+                    </div>
+                    <div className="kpi-value">{k.valor}</div>
+                    <div className="kpi-subtitle">{k.subtitulo}</div>
                   </div>
-                  <div className="kpi-value">{k.valor}</div>
-                  <div className="kpi-subtitle">{k.subtitulo}</div>
+                ))}
+              </div>
+            </section>
+
+            {/* GRÁFICOS EM GRID */}
+            <div style={{ 
+              display: "grid", 
+              gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", 
+              gap: "20px" 
+            }}>
+              
+              {/* 1. VAGAS POR INSTITUIÇÃO */}
+              <section className="card chart-card">
+                <div className="chart-header">
+                  <h3>Oferta de Vagas (Mensal)</h3>
+                  <p>Principais fornecedores de consultas/exames</p>
                 </div>
-              ))}
+                <div className="chart-wrapper">
+                  <ResponsiveContainer width="100%" height={250}>
+                    <BarChart data={vacanciesData} layout="vertical" margin={{ left: 40 }}>
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                      <XAxis type="number" />
+                      <YAxis dataKey="name" type="category" width={120} tick={{fontSize: 12}} />
+                      <Tooltip />
+                      <Bar dataKey="vagas" fill="#3B82F6" radius={[0, 4, 4, 0]} name="Vagas Ofertadas" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              {/* 4. DEMANDA POR ESPECIALISTA */}
+              <section className="card chart-card">
+                <div className="chart-header">
+                  <h3>Especialidades Mais Procuradas</h3>
+                  <p>Demanda reprimida e solicitações atuais</p>
+                </div>
+                <div className="chart-wrapper">
+                  <ResponsiveContainer width="100%" height={250}>
+                    <BarChart data={demandSpecialistsData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" tick={{fontSize: 12}} />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="solicitacoes" fill="#8B5CF6" radius={[4, 4, 0, 0]} name="Solicitações" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              {/* 2. PIE CHART - ABSENTEÍSMO */}
+              <section className="card chart-card">
+                <div className="chart-header">
+                  <h3>Status das Consultas</h3>
+                  <p>Taxa de comparecimento vs. Faltas</p>
+                </div>
+                <div className="chart-wrapper" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <PieChart>
+                      <Pie
+                        data={appointmentStatusData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        paddingAngle={5}
+                        dataKey="value"
+                        label
+                      >
+                        {appointmentStatusData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS_STATUS[index % COLORS_STATUS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend verticalAlign="bottom" height={36}/>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              {/* 3. PERFIL DO ABSENTEÍSMO (Complexo) */}
+              <section className="card chart-card">
+                <div className="chart-header">
+                  <h3>Perfil de Quem Falta (Absenteísmo)</h3>
+                  <p>Análise de pacientes com faltas não justificadas</p>
+                </div>
+                
+                {/* Mini Gráficos Internos */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                  
+                  {/* Bairros */}
+                  <div>
+                    <h4 style={{ fontSize: '14px', color: '#666', marginBottom: '5px' }}>Por Bairro (Pelotas)</h4>
+                    <ResponsiveContainer width="100%" height={120}>
+                      <BarChart data={absenteeNeighborhoodData}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis dataKey="name" tick={{fontSize: 10}} interval={0} />
+                        <YAxis hide />
+                        <Tooltip />
+                        <Bar dataKey="value" fill="#EF4444" radius={[4, 4, 0, 0]} name="% Faltas" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                     {/* Gênero */}
+                    <div style={{ flex: 1 }}>
+                       <h4 style={{ fontSize: '14px', color: '#666', textAlign: 'center' }}>Por Gênero</h4>
+                       <ResponsiveContainer width="100%" height={100}>
+                        <PieChart>
+                          <Pie data={absenteeGenderData} cx="50%" cy="50%" innerRadius={25} outerRadius={40} dataKey="value">
+                             <Cell fill="#EC4899" /> {/* Mulheres */}
+                             <Cell fill="#3B82F6" /> {/* Homens */}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                       </ResponsiveContainer>
+                       <div style={{textAlign: 'center', fontSize: '11px', color: '#888'}}>Rosa: Mulher / Azul: Homem</div>
+                    </div>
+
+                    {/* Idade */}
+                    <div style={{ flex: 1 }}>
+                       <h4 style={{ fontSize: '14px', color: '#666', textAlign: 'center' }}>Por Idade</h4>
+                       <ResponsiveContainer width="100%" height={100}>
+                         <BarChart data={absenteeAgeData}>
+                           <Tooltip />
+                           <Bar dataKey="value" fill="#64748B" name="% Idade" />
+                           <XAxis dataKey="name" tick={{fontSize: 10}} />
+                         </BarChart>
+                       </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                </div>
+              </section>
+
             </div>
-
-            <div className="sub-tabs-row kpi-tabs-row">
-              <div className="sub-tabs">
-                <button
-                  className={`sub-tab ${
-                    kpiTab === "atendimentos" ? "active" : ""
-                  }`}
-                  onClick={() => setKpiTab("atendimentos")}
-                >
-                  Atendimentos
-                </button>
-              </div>
-            </div>
-            <div className="chart-card">
-              <div className="chart-header">
-                <h3>Atendimentos Mensais</h3>
-                <p>
-                  Evolução dos atendimentos, consultas e exames nos últimos 6
-                  meses
-                </p>
-              </div>
-
-              <div className="chart-wrapper">
-                <ResponsiveContainer width="100%" height={260}>
-                  <BarChart data={atendimentosMensais}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="mes" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-
-                    {/* TOTAL DE ATENDIMENTOS – Laranja */}
-                    <Bar
-                      dataKey="total"
-                      name="Total de Atendimentos"
-                      fill="#F59E0B" /* Laranja */
-                      radius={[4, 4, 0, 0]}
-                    />
-
-                    {/* CONSULTAS – Azul */}
-                    <Bar
-                      dataKey="consultas"
-                      name="Consultas"
-                      fill="#3B82F6" /* Azul */
-                      radius={[4, 4, 0, 0]}
-                    />
-
-                    {/* EXAMES – Verde */}
-                    <Bar
-                      dataKey="exames"
-                      name="Exames"
-                      fill="#10B981" /* Verde */
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </section>
+          </div>
         )}
       </main>
     </div>

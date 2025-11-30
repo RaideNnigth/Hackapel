@@ -1,16 +1,46 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {
+  ArrowLeft,
+  Plus,
+  Save,
+  Send,
+  Trash2,
+  Table as TableIcon,
+  User // Added User icon for the greeting
+} from "lucide-react";
 import api from "../api_helper";
 
 export default function PlanilhaGercon() {
+  const [userName, setUserName] = useState("");
   const [rows, setRows] = useState([
     { prestador: "", endereco: "", especialidade: "", data: "", horario: "", profissional: "" }
   ]);
+
+  // Load user name on mount
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        // Assuming 'user' is stored as a JSON string
+        const parsedUser = JSON.parse(storedUser);
+        setUserName(parsedUser.full_name || "Usuário");
+      }
+    } catch (error) {
+      console.error("Erro ao carregar usuário:", error);
+      setUserName("Usuário");
+    }
+  }, []);
 
   const addRow = () => {
     setRows([
       ...rows,
       { prestador: "", endereco: "", especialidade: "", data: "", horario: "", profissional: "" }
     ]);
+  };
+
+  const removeRow = (index) => {
+    const updated = rows.filter((_, i) => i !== index);
+    setRows(updated);
   };
 
   const updateCell = (index, field, value) => {
@@ -48,13 +78,13 @@ export default function PlanilhaGercon() {
         r.horario,
         r.profissional
       ].join(",")
-    }
-    );
+    });
 
-    api.post("/api/hospital-journals", objsToSave);
+    api.post("/api/hospital-journals", objsToSave)
+      .then(() => alert("Planilha salva no sistema com sucesso!"))
+      .catch(err => console.error("Erro ao salvar", err));
 
     const csvContent = [header, ...lines].join("\n");
-
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
 
@@ -64,127 +94,184 @@ export default function PlanilhaGercon() {
     a.click();
   };
 
+  const exportToGercon = () => {
+    api.post(
+      "http://127.0.0.1:5000/integracao/agendas/consumirExterno",
+      rows,
+      {
+        headers: {
+          "X-API-Key": "hackapel2024",
+          "usuario": "hackapel",
+          "senha": "Hackapel@2024",
+          "cnes": "1234567",
+          "Content-Type": "application/json"
+        }
+      }
+    )
+      .then(response => {
+        alert("Sucesso! " + response.data.mensagem);
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error("Erro ao enviar:", error);
+        alert("Erro ao enviar para o GERCON. Verifique o console.");
+      });
+  };
+
   return (
-    <div style={{ padding: "40px", maxWidth: "1200px", margin: "0 auto" }}>
-      <h1 style={{ marginBottom: "20px" }}>Planilha GERCON</h1>
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-12">
 
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          marginBottom: "20px",
-          fontSize: "16px"
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={th}>Prestador</th>
-            <th style={th}>Endereço</th>
-            <th style={th}>Especialidade</th>
-            <th style={th}>Data</th>
-            <th style={th}>Horário</th>
-            <th style={th}>Nome do Profissional</th>
-          </tr>
-        </thead>
+      {/* Header */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center gap-4">
+          <button
+            onClick={() => window.history.back()}
+            className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </button>
 
-        <tbody>
-          {rows.map((row, idx) => (
-            <tr key={idx}>
-              <td style={td}>
-                <input
-                  style={input}
-                  value={row.prestador}
-                  onChange={e => updateCell(idx, "prestador", e.target.value)}
-                />
-              </td>
+          <div className="flex items-center gap-3">
+            <div className="bg-orange-500 p-2 rounded-lg">
+              <TableIcon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold leading-tight">Editor de Agenda GERCON</h1>
+              <p className="text-xs text-slate-500 font-medium tracking-wide uppercase">Integração Externa</p>
+            </div>
+          </div>
 
-              <td style={td}>
-                <input
-                  style={input}
-                  value={row.endereco}
-                  onChange={e => updateCell(idx, "endereco", e.target.value)}
-                />
-              </td>
+          {/* User Greeting Section - Pushed to right with ml-auto */}
+          <div className="ml-auto hidden md:flex items-center gap-3 pl-6 border-l border-slate-200">
+            <div className="text-right hidden lg:block">
+              <p className="text-sm font-semibold text-slate-700">Olá, {userName}!</p>
+              <p className="text-xs text-slate-400">Oficial Administrador</p>
+            </div>
+            <div className="bg-slate-100 p-2 rounded-full">
+              <User className="w-5 h-5 text-slate-500" />
+            </div>
+          </div>
 
-              <td style={td}>
-                <input
-                  style={input}
-                  value={row.especialidade}
-                  onChange={e => updateCell(idx, "especialidade", e.target.value)}
-                />
-              </td>
+        </div>
+      </header>
 
-              <td style={td}>
-                <input
-                  type="date"
-                  style={input}
-                  value={row.data}
-                  onChange={e => updateCell(idx, "data", e.target.value)}
-                />
-              </td>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
 
-              <td style={td}>
-                <input
-                  type="time"
-                  style={input}
-                  value={row.horario}
-                  onChange={e => updateCell(idx, "horario", e.target.value)}
-                />
-              </td>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
 
-              <td style={td}>
-                <input
-                  style={input}
-                  value={row.profissional}
-                  onChange={e => updateCell(idx, "profissional", e.target.value)}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          {/* Table Container */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold tracking-wider">
+                  <th className="p-4 min-w-[200px]">Prestador</th>
+                  <th className="p-4 min-w-[250px]">Endereço</th>
+                  <th className="p-4 min-w-[200px]">Especialidade</th>
+                  <th className="p-4 w-[140px]">Data</th>
+                  <th className="p-4 w-[120px]">Horário</th>
+                  <th className="p-4 min-w-[200px]">Profissional</th>
+                  <th className="p-4 w-[50px]"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {rows.map((row, idx) => (
+                  <tr key={idx} className="hover:bg-slate-50 transition-colors group">
+                    <td className="p-2">
+                      <input
+                        className="w-full bg-transparent border-0 border-b border-transparent focus:border-orange-500 focus:ring-0 text-slate-700 text-sm py-2 px-1 transition-all placeholder-slate-300"
+                        placeholder="Nome do local"
+                        value={row.prestador}
+                        onChange={e => updateCell(idx, "prestador", e.target.value)}
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        className="w-full bg-transparent border-0 border-b border-transparent focus:border-orange-500 focus:ring-0 text-slate-700 text-sm py-2 px-1 transition-all placeholder-slate-300"
+                        placeholder="Endereço completo"
+                        value={row.endereco}
+                        onChange={e => updateCell(idx, "endereco", e.target.value)}
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        className="w-full bg-transparent border-0 border-b border-transparent focus:border-orange-500 focus:ring-0 text-slate-700 text-sm py-2 px-1 transition-all placeholder-slate-300"
+                        placeholder="Ex: Cardiologia"
+                        value={row.especialidade}
+                        onChange={e => updateCell(idx, "especialidade", e.target.value)}
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="date"
+                        className="w-full bg-transparent border-0 border-b border-transparent focus:border-orange-500 focus:ring-0 text-slate-700 text-sm py-2 px-1 transition-all"
+                        value={row.data}
+                        onChange={e => updateCell(idx, "data", e.target.value)}
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="time"
+                        className="w-full bg-transparent border-0 border-b border-transparent focus:border-orange-500 focus:ring-0 text-slate-700 text-sm py-2 px-1 transition-all"
+                        value={row.horario}
+                        onChange={e => updateCell(idx, "horario", e.target.value)}
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        className="w-full bg-transparent border-0 border-b border-transparent focus:border-orange-500 focus:ring-0 text-slate-700 text-sm py-2 px-1 transition-all placeholder-slate-300"
+                        placeholder="Nome do médico"
+                        value={row.profissional}
+                        onChange={e => updateCell(idx, "profissional", e.target.value)}
+                      />
+                    </td>
+                    <td className="p-2 text-center">
+                      <button
+                        onClick={() => removeRow(idx)}
+                        className="text-slate-300 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50 opacity-0 group-hover:opacity-100"
+                        title="Remover linha"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-      <button style={btnAdd} onClick={addRow}>➕ Adicionar Linha</button>
-      <button style={btnExport} onClick={exportAndSaveSheet}>📤 Salvar e Exportar Planilha</button>
+          {/* Add Row Button Area */}
+          <div className="p-4 bg-slate-50 border-t border-slate-200">
+            <button
+              onClick={addRow}
+              className="flex items-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700 hover:bg-orange-50 px-4 py-2 rounded-lg transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              Adicionar nova linha
+            </button>
+          </div>
+        </div>
 
+        {/* Action Buttons Footer */}
+        <div className="mt-6 flex flex-col md:flex-row justify-end gap-4">
+          <button
+            onClick={exportAndSaveSheet}
+            className="flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 font-medium px-6 py-3 rounded-lg transition-all shadow-sm"
+          >
+            <Save className="w-4 h-4" />
+            Salvar e Baixar CSV
+          </button>
+
+          <button
+            onClick={exportToGercon}
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-8 py-3 rounded-lg transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          >
+            <Send className="w-4 h-4" />
+            Enviar para GERCON
+          </button>
+        </div>
+
+      </main>
     </div>
   );
 }
-
-const th = {
-  border: "1px solid #ccc",
-  padding: "10px",
-  background: "#f4f4f4",
-  textAlign: "left"
-};
-
-const td = {
-  border: "1px solid #ccc",
-  padding: "5px"
-};
-
-const input = {
-  width: "100%",
-  padding: "6px",
-  border: "1px solid #ccc",
-  borderRadius: "4px"
-};
-
-const btnAdd = {
-  padding: "10px 20px",
-  marginRight: "10px",
-  background: "#4CAF50",
-  color: "#fff",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer"
-};
-
-const btnExport = {
-  padding: "10px 20px",
-  background: "#3b82f6",
-  color: "#fff",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer"
-};
