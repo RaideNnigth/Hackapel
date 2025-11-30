@@ -3,9 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import notificationRotes from "./routes/notificationRoutes.js"
+import postToSendRoutes from "./routes/postToSendRoutes.js";
 import { testConnection } from "./config/database.js";
 import sequelize from "./config/database.js";
-import "./models/User.js"; // garante que o model é registrado
+import "./models/User.js";
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.get("/api/health", async (req, res) => {
 // MVC routes
 app.use("/api/auth", authRoutes);
 app.use("/api/notification", notificationRotes);
+app.use("/api/posts-to-send", postToSendRoutes);
 
 // Start server after DB sync
 async function start() {

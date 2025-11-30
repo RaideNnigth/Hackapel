@@ -1,6 +1,11 @@
 import { Router } from "express";
-import { login, registerUser, registerPaciente } from "../controllers/authController.js";
+import {
+  login,
+  registerUser,
+  registerPaciente,
+} from "../controllers/authController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { requireRoles } from "../middlewares/roleMiddleware.js";
 
 const router = Router();
 
@@ -8,6 +13,7 @@ const router = Router();
 router.post("/login", login);
 router.post("/registerPaciente", registerPaciente);
 
+// Authenticated route - get current user info
 router.get("/me", authMiddleware, (req, res) => {
   res.json({
     message: "Authenticated user",
@@ -16,6 +22,11 @@ router.get("/me", authMiddleware, (req, res) => {
 });
 
 // Private route - only ADMIN can create users
-router.post("/registerUser", authMiddleware, registerUser);
+router.post(
+  "/registerUser",
+  authMiddleware,
+  requireRoles("ADMIN"),
+  registerUser
+);
 
 export default router;

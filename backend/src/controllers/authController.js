@@ -188,8 +188,7 @@ export async function registerPaciente(req, res) {
 
 // --------------------------------------------------------
 // POST /auth/registerUser
-// Só pode ser usado por ADMIN autenticado (JWT válido)
-// Exemplo de uso (ADMIN criando um UBS):
+// Body example:
 // {
 //   "full_name": "Clínica X",
 //   "email": "contato@clinicax.com",
@@ -206,36 +205,6 @@ export async function registerPaciente(req, res) {
 // }
 // --------------------------------------------------------
 export async function registerUser(req, res) {
-  // 1) Check if token is valid and present (authMiddleware já fez isso)
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Authorization token is missing" });
-  }
-
-  const token = authHeader.split(" ")[1];
-  let decoded;
-  try {
-    decoded = jwt.verify(token, JWT_SECRET);
-  } catch (err) {
-    return res.status(401).json({ message: "Invalid or expired token" });
-  }
-
-  // 2) Check if token belongs to an ADMIN user
-  if (!decoded.role || decoded.role !== "ADMIN") {
-    return res
-      .status(403)
-      .json({ message: "Only ADMIN tokens can create users" });
-  }
-
-  // 3) Check if ADMIN user is active and still a ADMIN
-  const adminUser = await User.findByPk(decoded.id);
-  if (!adminUser || adminUser.role !== "ADMIN" || !adminUser.is_active) {
-    return res
-      .status(403)
-      .json({ message: "Only active ADMIN users can create users" });
-  }
-
-  // 4) Proceed to create the new user
   const {
     full_name,
     email,
@@ -255,14 +224,14 @@ export async function registerUser(req, res) {
     is_active = true,
   } = req.body;
 
-  // Minimum required fields
+  // 1) Minimum required fields
   if (!full_name || !password) {
     return res.status(400).json({
       message: "full_name and password are required",
     });
   }
 
-    // Validate role
+  // 2) Validate role
   const allowedRoles = [
     "ADMIN",
     "UBS",
@@ -270,21 +239,38 @@ export async function registerUser(req, res) {
     "OFICIAL ADMINISTRATIVO",
     "HOSPITAL/LAB",
   ];
+
   const finalRole = allowedRoles.includes(role) ? role : "";
 
   if (!finalRole) {
-    return res.status(400).json({ message: "Valid role is required. They are: " + allowedRoles.join(", ") });
+    return res.status(400).json({
+      message:
+        "Valid role is required. They are: " + allowedRoles.join(", "),
+    });
   }
 
-  if (!cpf || role === "PACIENTE" || role === "ADMIN" || role === "OFICIAL ADMINISTRATIVO") {
-    return res.status(400).json({ message: "CPF is required" });
+  // 3) CPF and CNES validations
+
+  // CPF mandatory for PACIENTE, ADMIN and OFICIAL ADMINISTRATIVO
+  if (
+    ["PACIENTE", "ADMIN", "OFICIAL ADMINISTRATIVO"].includes(finalRole) &&
+    !cpf
+  ) {
+    return res
+      .status(400)
+      .json({ message: "CPF is required for this role" });
   }
-  if (!cnes || role === "UBS" || role === "HOSPITAL/LAB") {
-    return res.status(400).json({ message: "CNES is required" });
+
+  // CNES mandatory for UBS and HOSPITAL/LAB
+  if (["UBS", "HOSPITAL/LAB"].includes(finalRole) && !cnes) {
+    return res
+      .status(400)
+      .json({ message: "CNES is required for this role" });
   }
 
   try {
-    // Uniqueness checks
+    // 4) Uniqueness checks
+
     if (email) {
       const existingByEmail = await User.findOne({ where: { email } });
       if (existingByEmail) {
@@ -292,24 +278,30 @@ export async function registerUser(req, res) {
       }
     }
 
-    const existingByCpf = await User.findOne({ where: { cpf } });
-    if (existingByCpf) {
-      return res.status(409).json({ message: "CPF already registered" });
+    if (cpf) {
+      const existingByCpf = await User.findOne({ where: { cpf } });
+      if (existingByCpf) {
+        return res.status(409).json({ message: "CPF already registered" });
+      }
     }
 
-    const existingByCnes = await User.findOne({ where: { cnes } });
-    if (existingByCnes) {
-      return res.status(409).json({ message: "CNES already registered" });
+    if (cnes) {
+      const existingByCnes = await User.findOne({ where: { cnes } });
+      if (existingByCnes) {
+        return res.status(409).json({ message: "CNES already registered" });
+      }
     }
 
+    // 5) Paassword hashing
     const password_hash = await bcrypt.hash(password, 10);
 
+    // 6) Create user
     const user = await User.create({
       full_name,
       email: email || null,
       password_hash,
-      cpf,
-      cnes,
+      cpf: cpf || null,
+      cnes: cnes || null,
       cns: cns || null,
       phone_number: phone_number || null,
       address_street: address_street || null,
@@ -323,6 +315,7 @@ export async function registerUser(req, res) {
       is_active,
     });
 
+    // 7) Generate token for the new user
     const newUserToken = generateToken(user);
 
     return res.status(201).json({
