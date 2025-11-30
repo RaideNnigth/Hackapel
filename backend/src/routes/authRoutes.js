@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { login, register } from "../controllers/AuthController.js";
+import { login, registerUser, registerPaciente } from "../controllers/AuthController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
 // Public routes
 router.post("/login", login);
-router.post("/register", register);
+router.post("/registerPaciente", registerPaciente);
 
 router.get("/me", authMiddleware, (req, res) => {
   res.json({
@@ -16,6 +16,6 @@ router.get("/me", authMiddleware, (req, res) => {
 });
 
 // Private route - only ADMIN can create users
-router.post("/auth/registerUser", authMiddleware, registerUser);
+router.post("/registerUser", authMiddleware, registerUser);
 
 export default router;
