@@ -16,7 +16,7 @@ export default function AdminLogin() {
         password: senha,
       };
 
-      const response = await api.post('api/auth/login', body);
+      const response = await api.post('api/auth/loginAdmin', body);
 
       const { token, user } = response.data;
 
