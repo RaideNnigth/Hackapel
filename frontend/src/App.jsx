@@ -5,6 +5,7 @@ import CriarPlanilha from "./pages/CriarPlanilha";
 import AdminAgendas from "./pages/AdminAgendas";
 import OficialAdministrativoDashboard from "./pages/OficialAdministrativoDashboard";
 import AdminConsultas from "./pages/AdminConsultas";
+import AdminDashboard from "./pages/AdminDashboard";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
          <Route path="/admin-agendas" element={<AdminAgendas />} />
           <Route path="/admin/dashboard" element={<OficialAdministrativoDashboard />} />
           <Route path="/admin-confirmacoes" element={<AdminConsultas />} />
+          <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   );
