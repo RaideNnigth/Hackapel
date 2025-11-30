@@ -262,14 +262,7 @@ export async function registerUser(req, res) {
     });
   }
 
-  if (!cpf) {
-    return res.status(400).json({ message: "CPF is required" });
-  }
-  if (!cnes) {
-    return res.status(400).json({ message: "CNES is required" });
-  }
-
-  // Validate role
+    // Validate role
   const allowedRoles = [
     "ADMIN",
     "UBS",
@@ -277,7 +270,18 @@ export async function registerUser(req, res) {
     "OFICIAL ADMINISTRATIVO",
     "HOSPITAL/LAB",
   ];
-  const finalRole = allowedRoles.includes(role) ? role : "PACIENTE";
+  const finalRole = allowedRoles.includes(role) ? role : "";
+
+  if (!finalRole) {
+    return res.status(400).json({ message: "Valid role is required. They are: " + allowedRoles.join(", ") });
+  }
+
+  if (!cpf || role === "PACIENTE" || role === "ADMIN" || role === "OFICIAL ADMINISTRATIVO") {
+    return res.status(400).json({ message: "CPF is required" });
+  }
+  if (!cnes || role === "UBS" || role === "HOSPITAL/LAB") {
+    return res.status(400).json({ message: "CNES is required" });
+  }
 
   try {
     // Uniqueness checks
