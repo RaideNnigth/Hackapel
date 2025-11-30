@@ -7,6 +7,7 @@ import notificationRotes from "./routes/notificationRoutes.js"
 import postToSendRoutes from "./routes/postToSendRoutes.js";
 import telegramRoutes from './routes/telegramRoutes.js';
 import webPushRoutes from "./routes/webPushRoutes.js";
+import HospitalJournalRoutes from "./routes/hospitalJournalRoutes.js";
 import { testConnection } from "./config/database.js";
 import sequelize from "./config/database.js";
 
@@ -50,6 +51,7 @@ app.use("/api/notification", notificationRotes);
 app.use("/api/posts-to-send", postToSendRoutes);
 app.use("/api/telegram", telegramRoutes);
 app.use("/api/webpush", webPushRoutes);
+app.use("/api/hospital-journals", HospitalJournalRoutes);
 
 // Start server after DB sync
 async function start() {

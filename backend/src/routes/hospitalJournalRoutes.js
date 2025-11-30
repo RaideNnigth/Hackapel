@@ -4,8 +4,8 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { requireRoles } from "../middlewares/roleMiddleware.js";
 
 import {
-  createAppointment,
-  getAppointments,
+  createHospitalJournal,
+  getHospitalJournals,
 } from "../controllers/HospitalJournalController.js";
 
 const router = Router();
@@ -17,8 +17,8 @@ const router = Router();
 router.get(
   "/",
   authMiddleware,
-  requireRoles("ADMIN", "PACIENTE"),
-  getAppointments
+  requireRoles("ADMIN", "OFICIAL ADMINISTRATIVO"),
+  getHospitalJournals
 );
 
 /**
@@ -28,8 +28,8 @@ router.get(
 router.post(
   "/",
   authMiddleware,
-  requireRoles("ADMIN"),
-  createAppointment
+  requireRoles("ADMIN", "HOSPITAL/LAB"),
+  createHospitalJournal
 );
 
 export default router;

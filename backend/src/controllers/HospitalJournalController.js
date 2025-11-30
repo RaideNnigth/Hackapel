@@ -27,12 +27,7 @@ export const createHospitalJournal = async (req, res) => {
   try {
     const payload = req.body;
 
-    // Must be an array
-    if (!Array.isArray(payload)) {
-      return res.status(400).json({
-        message: "Request body must be an array of HospitalJournal objects.",
-      });
-    }
+    console.log("Recebi essa bosta aq: ", payload);
 
     // Validate each item
     for (const entry of payload) {

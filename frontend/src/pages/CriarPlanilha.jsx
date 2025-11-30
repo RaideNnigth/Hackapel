@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "../api_helper";
 
 export default function PlanilhaGercon() {
   const [rows, setRows] = useState([
@@ -18,7 +19,7 @@ export default function PlanilhaGercon() {
     setRows(updated);
   };
 
-  const exportCSV = () => {
+  const exportAndSaveSheet = () => {
     const header = [
       "Prestador",
       "Endereço",
@@ -28,8 +29,18 @@ export default function PlanilhaGercon() {
       "Nome do Profissional"
     ].join(",");
 
-    const lines = rows.map(r =>
-      [
+    let objsToSave = [];
+    const lines = rows.map(r => {
+      objsToSave.push({
+        prestador: r.prestador,
+        endereco: r.endereco,
+        especialidade: r.especialidade,
+        data: r.data,
+        horario: r.horario,
+        nome_profissional: r.profissional
+      });
+
+      return [
         r.prestador,
         r.endereco,
         r.especialidade,
@@ -37,7 +48,10 @@ export default function PlanilhaGercon() {
         r.horario,
         r.profissional
       ].join(",")
+    }
     );
+
+    api.post("/api/hospital-journals", objsToSave);
 
     const csvContent = [header, ...lines].join("\n");
 
@@ -131,7 +145,8 @@ export default function PlanilhaGercon() {
       </table>
 
       <button style={btnAdd} onClick={addRow}>➕ Adicionar Linha</button>
-      <button style={btnExport} onClick={exportCSV}>📤 Exportar CSV</button>
+      <button style={btnExport} onClick={exportAndSaveSheet}>📤 Salvar e Exportar Planilha</button>
+
     </div>
   );
 }
