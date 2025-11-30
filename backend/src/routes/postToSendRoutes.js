@@ -8,7 +8,6 @@ import {
   addPostToSend,
   editPostToSend,
   deletePostToSend,
-  sendNowPostToSend,
 } from "../controllers/postToSendController.js";
 
 const router = Router();
@@ -17,7 +16,7 @@ const router = Router();
  * Get all posts to send
  * ADMIN only
  */
-router.get("/", authMiddleware, requireRoles("ADMIN"), listAllPostsToSend);
+router.get("/", authMiddleware, requireRoles("ADMIN", "PACIENTE"), listAllPostsToSend);
 
 /**
  * Create a new post to send
@@ -36,16 +35,5 @@ router.put("/:id", authMiddleware, requireRoles("ADMIN"), editPostToSend);
  * ADMIN only
  */
 router.delete("/:id", authMiddleware, requireRoles("ADMIN"), deletePostToSend);
-
-/**
- * Trigger immediate sending of a post
- * ADMIN only
- */
-router.post(
-  "/:id/send-now",
-  authMiddleware,
-  requireRoles("ADMIN"),
-  sendNowPostToSend
-);
 
 export default router;

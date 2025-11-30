@@ -92,29 +92,3 @@ export const deletePostToSend = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
-
-// POST /api/posts-to-send/:id/send-now
-export const sendNowPostToSend = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const post = await PostToSend.findByPk(id);
-
-    if (!post) {
-      return res.status(404).json({ error: "Post not found" });
-    }
-
-    // Aqui futuramente você chama o Job/Queue (Bull, Agenda, etc.)
-    console.log(
-      `[JOB-STUB] Would enqueue post ${id} (${post.postTitle}) to be sent now`
-    );
-
-    // Pode marcar algo tipo "enqueued" depois, se quiser
-    return res
-      .status(200)
-      .json({ message: "Post send job triggered (stub)", post });
-  } catch (error) {
-    console.error("Error sending post now:", error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-};

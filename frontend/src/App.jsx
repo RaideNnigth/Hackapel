@@ -11,6 +11,9 @@ import PatientNewsletter from "./pages/PatientNewsletter";
 import PatientUpdate from "./pages/PatientUpdate";
 import AdminDashboard from "./pages/AdminDashboard";
 import PatientRegistration from "./pages/PatientRegistration";
+import UBSDashboard from "./pages/UBSDashboard";
+import UBSCreatePatient from "./pages/UBSCreatePatient";
+import UBSUpdatePatient from "./pages/UBSUpdatePatient";
 
 export default function App() {
   return (
@@ -18,19 +21,23 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        
         <Route path="/planilha" element={<CriarPlanilha />} />
 
-        <Route path="/ofc-admin/agendas" element={<OfcAdminAgendas />} />
         <Route path="/ofc-admin/dashboard" element={<OficialAdministrativoDashboard />} />
+        <Route path="/ofc-admin/agendas" element={<OfcAdminAgendas />} />
         <Route path="/ofc-admin/confirmacoes" element={<OfcAdminConsultas />} />
         
         <Route path="/patient/dashboard" element={<PatientDashboard />} />
         <Route path="/patient/appointments" element={<PatientAppointments />} />
         <Route path="/patient/newsletter" element={<PatientNewsletter />} />
         <Route path="/patient/update" element={<PatientUpdate />} />
-        
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/patient/registration" element={<PatientRegistration />} />
+
+        <Route path="/ubs/dashboard" element={<UBSDashboard />} />
+        <Route path="/ubs/create-patient" element={<UBSCreatePatient />} />
+        <Route path="/ubs/update-patient" element={<UBSUpdatePatient />} />
       </Routes>
     </BrowserRouter>
   );

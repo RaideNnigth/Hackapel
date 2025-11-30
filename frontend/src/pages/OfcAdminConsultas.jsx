@@ -135,7 +135,7 @@ export default function ConfirmacaoConsultas() {
       </button>
 
       <h1 style={{ fontSize: 28, fontWeight: 600, color: "#111827" }}>
-        Solicitar Confirmação de Consultas
+        Solicitar Confirmação de Consulta
       </h1>
       <p
         style={{

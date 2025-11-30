@@ -6,7 +6,7 @@ export default function OficialAdministrativoDashboard() {
 
   return (
     <div className="admin-home-container">
-      <h1>Painel do Administrador</h1>
+      <h1>PeloSUS - Painel do Oficial Administrador</h1>
       <p className="subtitle">Selecione a funcionalidade que deseja acessar</p>
 
       <div className="cards-wrapper">
@@ -14,7 +14,7 @@ export default function OficialAdministrativoDashboard() {
         {/* Card Gerenciar Planilhas */}
         <div 
           className="admin-card"
-          onClick={() => navigate("/admin-agendas")}
+          onClick={() => navigate("/ofc-admin/agendas")}
         >
           <div className="icon blue">
             📄
@@ -37,7 +37,7 @@ export default function OficialAdministrativoDashboard() {
         {/* Card Solicitar Confirmações */}
         <div 
           className="admin-card"
-          onClick={() => navigate("/admin-confirmacoes")}
+          onClick={() => navigate("/ofc-admin/confirmacoes")}
         >
           <div className="icon green">
             🔔
