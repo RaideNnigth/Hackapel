@@ -6,14 +6,16 @@ import authRoutes from "./routes/authRoutes.js";
 import notificationRotes from "./routes/notificationRoutes.js"
 import postToSendRoutes from "./routes/postToSendRoutes.js";
 import telegramRoutes from './routes/telegramRoutes.js';
+import webPushRoutes from "./routes/webPushRoutes.js";
 import { testConnection } from "./config/database.js";
 import sequelize from "./config/database.js";
-import pelotasInformesRouter from "./routes/pelotasInformesRoutes.js";
+
 
 import { syncPelotasInformesToPosts } from "./jobs/pelotasInformesSync.js";
 import { runNotificationDispatchJob  } from "./jobs/notificationDispatchJob.js";
 
 import "./models/User.js";
+import "./models/WebPushSubscription.js";
 
 dotenv.config();
 
@@ -47,6 +49,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/notification", notificationRotes);
 app.use("/api/posts-to-send", postToSendRoutes);
 app.use("/api/telegram", telegramRoutes);
+app.use("/api/webpush", webPushRoutes);
 
 // Start server after DB sync
 async function start() {

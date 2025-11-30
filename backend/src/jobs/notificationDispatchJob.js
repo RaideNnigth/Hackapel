@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import Notification from "../models/Notification.js";
 import PostToSend from "../models/PostToSend.js";
 import { EmailService } from "../services/emailService.js";
+import { sendWebPushToUser } from "../services/webPushService.js";
 import User from "../models/User.js";
 
 
@@ -35,19 +36,17 @@ async function sendWhatsApp({ phone, message }) {
   return true;
 }
 
-/**
- * Placeholder for WebPush notifications.
- * To implement this for real, you'll need:
- *  - a table of subscriptions (endpoint, keys, userId),
- *  - the 'web-push' library and VAPID keys.
- */
 async function sendWebPush({ userId, title, body }) {
-  // TODO: load subscriptions for this user from DB and send using web-push
-  console.log(
-    `[WEBPUSH] Sending WebPush to userId=${userId} | title="${title}"`
-  );
-  // Simulate success
-  return true;
+  const ok = await sendWebPushToUser({
+    userId,
+    title,
+    body,
+    data: {
+      timestamp: new Date().toISOString(),
+    },
+  });
+
+  return ok;
 }
 
 /**
