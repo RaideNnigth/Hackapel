@@ -1,13 +1,11 @@
 // backend/src/services/telegramService.js
-import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 dotenv.config();
 
 const API_URL = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
 
 export async function setWebhook() {
-  const url = `${API_URL}/setWebhook`;
-  const response = await fetch(url, {
+  const response = await fetch(`${API_URL}/setWebhook`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ url: process.env.TELEGRAM_WEBHOOK_PUBLIC_URL }),
@@ -16,7 +14,6 @@ export async function setWebhook() {
 }
 
 export async function sendMessage(chatId, text, replyMarkup) {
-  const url = `${API_URL}/sendMessage`;
   const body = {
     chat_id: chatId,
     text,
@@ -25,7 +22,7 @@ export async function sendMessage(chatId, text, replyMarkup) {
   if (replyMarkup) {
     body.reply_markup = replyMarkup;
   }
-  const response = await fetch(url, {
+  const response = await fetch(`${API_URL}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

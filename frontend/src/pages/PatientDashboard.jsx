@@ -24,24 +24,21 @@ const PatientDashboard = () => {
       description: "Consulte seus agendamentos confirmados",
       icon: <Calendar className="w-6 h-6 text-blue-600" />,
       buttonText: "Acessar",
-    },
-    {
-      title: "Confirmar/Cancelar Consulta",
-      description: "Gerencie suas consultas agendadas",
-      icon: <CheckCircle2 className="w-6 h-6 text-green-600" />,
-      buttonText: "Acessar",
+      link: "/patient/appointments",
     },
     {
       title: "Eventos e Notícias",
       description: "Acompanhe eventos da Secretaria de Saúde",
       icon: <Newspaper className="w-6 h-6 text-purple-600" />,
       buttonText: "Acessar",
+      link: "/patient/newsletter",
     },
     {
       title: "Atualizar Dados",
       description: "Atualize telefone, email e endereço",
       icon: <UserCog className="w-6 h-6 text-orange-600" />,
       buttonText: "Acessar",
+      link: "/patient/update",
     },
   ];
 
@@ -88,9 +85,10 @@ const PatientDashboard = () => {
           </div>
         </div>
 
-        {/* Cards Grid */}
+        {/* Custom Cards Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {cards.map((card, index) => (
+          {/* First row: two columns */}
+          {cards.slice(0, 2).map((card, index) => (
             <div
               key={index}
               className="bg-white p-6 rounded-xl shadow-sm border border-transparent hover:border-blue-100 hover:shadow-md transition-all duration-200 flex flex-col"
@@ -111,12 +109,45 @@ const PatientDashboard = () => {
               </p>
 
               <div className="mt-auto">
-                <button className="w-full bg-[#05051F] hover:bg-black text-white font-medium py-3 rounded-lg transition-colors text-sm tracking-wide">
+                <button
+                  className="w-full bg-[#05051F] hover:bg-black text-white font-medium py-3 rounded-lg transition-colors text-sm tracking-wide"
+                  onClick={() => navigate(card.link)}
+                >
                   {card.buttonText}
                 </button>
               </div>
             </div>
           ))}
+          {/* Second row: single column, spans two columns on md+ screens */}
+          <div className="md:col-span-2">
+            <div
+              className="bg-white p-6 rounded-xl shadow-sm border border-transparent hover:border-blue-100 hover:shadow-md transition-all duration-200 flex flex-col"
+            >
+              <div className="flex items-start gap-3 mb-3">
+                <div className="mt-1 flex-shrink-0">
+                  {cards[2].icon}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 text-lg">
+                    {cards[2].title}
+                  </h3>
+                </div>
+              </div>
+
+              <p className="text-gray-500 mb-8 ml-9 text-sm">
+                {cards[2].description}
+              </p>
+
+              <div className="mt-auto">
+                <button
+                  className="w-full bg-[#05051F] hover:bg-black text-white font-medium py-3 rounded-lg transition-colors text-sm tracking-wide"
+                  onClick={() => navigate(cards[2].link)}
+                >
+                  {cards[2].buttonText}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>

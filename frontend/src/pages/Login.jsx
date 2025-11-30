@@ -85,7 +85,7 @@ export default function Login() {
         </div>
 
         <h2 className="text-center text-xl font-semibold text-gray-800">
-          Sistema de Saúde
+          PeloSUS
         </h2>
         <p className="text-center text-gray-500 mb-6">
           Faça login para acessar o sistema

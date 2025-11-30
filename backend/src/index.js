@@ -7,6 +7,7 @@ import postToSendRoutes from "./routes/postToSendRoutes.js";
 import telegramRoutes from './routes/telegramRoutes.js';
 import { testConnection } from "./config/database.js";
 import sequelize from "./config/database.js";
+import pelotasInformesRouter from "./routes/pelotasInformesRoutes.js";
 import "./models/User.js";
 
 dotenv.config();
