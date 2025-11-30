@@ -42,12 +42,21 @@ const Notification = sequelize.define(
     },
 
     medicName: {
-      type: DataTypes.TEXT(255)
+      type: DataTypes.STRING(255)
 
     },
 
-    
+    especiality: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      unique: false
+    },
 
+    scheduleStatus: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      unique: false
+    },
 
   },
   {
