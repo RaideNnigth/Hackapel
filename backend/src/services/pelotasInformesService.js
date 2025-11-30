@@ -95,8 +95,8 @@ export async function fetchPelotasInformes() {
       }
     );
 
-    // Cut just to 3 elements for testing purposes
-    informes.splice(3);
+    // Cut just to 10 elements for testing purposes
+    informes.splice(10);
     
     return informes;
   } catch (error) {

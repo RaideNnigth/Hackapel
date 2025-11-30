@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { EnablePushButton } from '../components/EnablePushButton';
 import { Activity, Calendar, CheckCircle2, Newspaper, UserCog, LogOut, Check } from 'lucide-react';
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
+  const token = localStorage.getItem('token');
   const [showLogoutNotification, setShowLogoutNotification] = useState(false);
 
   const handleLogout = () => {
@@ -45,7 +47,7 @@ const PatientDashboard = () => {
   return (
     <div className="min-h-screen bg-[#EEF2FF] font-sans text-gray-800 p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-
+        {token && <EnablePushButton token={token} />}
         {/* Header Section */}
         <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
