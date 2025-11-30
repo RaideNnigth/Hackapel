@@ -2,7 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import AdminLogin from "./pages/AdminLogin";
 import CriarPlanilha from "./pages/CriarPlanilha";
-import PatientDashboard from "./pages/PatientDashboard";
+import AdminAgendas from "./pages/AdminAgendas";
+import OficialAdministrativoDashboard from "./pages/OficialAdministrativoDashboard";
+import AdminConsultas from "./pages/AdminConsultas";
 
 export default function App() {
   return (
@@ -10,8 +12,10 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/admin-login" element={<AdminLogin />} />
-        <Route path="/planilha" element={<CriarPlanilha />} />
-        <Route path="/patient/dashboard" element={<PatientDashboard />} />
+         <Route path="/planilha" element={<CriarPlanilha />} />
+         <Route path="/admin-agendas" element={<AdminAgendas />} />
+          <Route path="/admin/dashboard" element={<OficialAdministrativoDashboard />} />
+          <Route path="/admin-confirmacoes" element={<AdminConsultas />} />
       </Routes>
     </BrowserRouter>
   );

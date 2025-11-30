@@ -1,0 +1,86 @@
+.admin-home-container {
+  text-align: center;
+  padding: 40px 20px;
+  background: #eef4ff;
+  min-height: 100vh;
+}
+
+.subtitle {
+  color: #5a6370;
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+}
+
+.cards-wrapper {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.admin-card {
+  background: white;
+  width: 380px;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s;
+  position: relative;
+}
+
+.admin-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.icon {
+  font-size: 45px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  width: 65px;
+  height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blue {
+  background: #e3ecff;
+  color: #4678ff;
+}
+
+.green {
+  background: #e2f8e8;
+  color: #1fa451;
+}
+
+h3 {
+  font-size: 1.4rem;
+  margin: 10px 0 5px;
+}
+
+.desc {
+  color: #5b6470;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+}
+
+ul {
+  margin-left: 15px;
+  color: #4a90e2;
+  font-size: 0.95rem;
+}
+
+ul li {
+  margin-bottom: 6px;
+}
+
+.arrow {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  font-size: 22px;
+  color: #777;
+}
