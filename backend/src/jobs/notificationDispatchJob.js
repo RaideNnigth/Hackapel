@@ -6,8 +6,14 @@ import { sendWebPushToUser } from "../services/webPushService.js";
 import User from "../models/User.js";
 import axios from "axios";
 
-
+let maxEmails = 3;
 async function sendEmail({ to, subject, text, html }) {
+  if (maxEmails <= 0) {
+    console.log("Email sending limit reached, skipping email");
+    return false;
+  }
+  maxEmails -= 1;
+  
   if (!to) throw new Error("Missing recipient email");
 
   try {
