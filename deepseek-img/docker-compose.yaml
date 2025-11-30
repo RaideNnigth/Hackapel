@@ -1,0 +1,44 @@
+name: deepseek-local
+
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama serve & sleep 2
+        # Pull both deepseek models
+        if ! ollama list | grep -q "deepseek-r1:1.5b"; then
+          echo "Pulling deepseek-r1:1.5b model..."
+          ollama pull deepseek-r1:1.5b
+        fi
+        if ! ollama list | grep -q "deepseek-r1:8b"; then
+          echo "Pulling deepseek-r1:8b model..."
+          ollama pull deepseek-r1:8b
+        fi
+        wait
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "8888:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    volumes:
+      - openwebui_data:/app/backend/data
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_data:
+    driver: local
+  openwebui_data:
+    driver: local
