@@ -2,10 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import AdminLogin from "./pages/AdminLogin";
 import CriarPlanilha from "./pages/CriarPlanilha";
-import AdminAgendas from "./pages/AdminAgendas";
+import OfcAdminAgendas from "./pages/OfcAdminAgendas";
 import OficialAdministrativoDashboard from "./pages/OficialAdministrativoDashboard";
-import AdminConsultas from "./pages/AdminConsultas";
+import OfcAdminConsultas from "./pages/OfcAdminConsultas";
 import PatientDashboard from "./pages/PatientDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 
 export default function App() {
   return (
@@ -14,10 +15,11 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/planilha" element={<CriarPlanilha />} />
-        <Route path="/admin-agendas" element={<AdminAgendas />} />
-        <Route path="/admin/dashboard" element={<OficialAdministrativoDashboard />} />
-        <Route path="/admin-confirmacoes" element={<AdminConsultas />} />
+        <Route path="/ofc-admin/agendas" element={<OfcAdminAgendas />} />
+        <Route path="/ofc-admin/dashboard" element={<OficialAdministrativoDashboard />} />
+        <Route path="/ofc-admin/confirmacoes" element={<OfcAdminConsultas />} />
         <Route path="/patient/dashboard" element={<PatientDashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   );

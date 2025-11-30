@@ -4,6 +4,7 @@ import { Activity, Calendar, CheckCircle2, Newspaper, UserCog, LogOut, Check } f
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
   const [showLogoutNotification, setShowLogoutNotification] = useState(false);
 
   const handleLogout = () => {
@@ -54,11 +55,11 @@ const PatientDashboard = () => {
             <div className="flex items-center gap-2 mb-1">
               <Activity className="w-6 h-6 text-blue-600" />
               <h1 className="text-xl md:text-2xl font-semibold text-blue-700">
-                Sistema de Saúde Integrado
+                PeloSUS
               </h1>
             </div>
             <p className="text-gray-600 ml-1">
-              Bem-vindo(a) ao seu painel do paciente
+              Bem-vindo(a) ao seu painel do paciente.
             </p>
           </div>
 
@@ -79,7 +80,7 @@ const PatientDashboard = () => {
           <div className="w-1.5 bg-blue-600 flex-shrink-0"></div>
           <div className="p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-1">
-              Olá, Paciente!
+              Olá, {user.full_name}!
             </h2>
             <p className="text-gray-500 text-sm md:text-base">
               Acesse todas as funcionalidades do sistema através dos cartões abaixo

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import "../css/AdminAgendas.css";
+import "../css/OfcAdminAgendas.css";
 
-export default function AdminAgendas() {
+export default function OfcAdminAgendas() {
   const [filter, setFilter] = useState("todas");
 
   const [planilhas, setPlanilhas] = useState([
