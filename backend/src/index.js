@@ -6,7 +6,7 @@ import notificationRotes from "./routes/notificationRoutes.js"
 import postToSendRoutes from "./routes/postToSendRoutes.js";
 import { testConnection } from "./config/database.js";
 import sequelize from "./config/database.js";
-import pelotasInformesRouter from "./routes/pelotasInformes.routes.js";
+import pelotasInformesRouter from "./routes/pelotasInformesRoutes.js";
 import "./models/User.js";
 
 dotenv.config();
