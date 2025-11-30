@@ -41,9 +41,17 @@ function generateToken(user) {
 export async function login(req, res) {
   const { cpf, cnes, password } = req.body;
 
+  // Dont allow missing fields
   if (!password || (!cpf && !cnes)) {
     return res.status(400).json({
       message: "Password and either CPF or CNES are required",
+    });
+  }
+
+  // Dont allow both cpf and cnes together
+  if (cpf && cnes) {
+    return res.status(400).json({
+      message: "Send either CPF or CNES, not both",
     });
   }
 
@@ -51,31 +59,36 @@ export async function login(req, res) {
     let user = null;
 
     if (cnes) {
-      // Login por CNES (UBS / HOSPITAL/LAB)
+      // ------------------------------------------------
+      // Login per CNES (UBS / HOSPITAL/LAB)
+      // ------------------------------------------------
       user = await User.findOne({ where: { cnes } });
 
-      if (
-        !user ||
-        (user.role !== "UBS" && user.role !== "HOSPITAL/LAB")
-      ) {
+      const allowedRolesForCnes = ["UBS", "HOSPITAL/LAB"];
+
+      if (!user || !allowedRolesForCnes.includes(user.role)) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
     } else if (cpf) {
-      // Login por CPF (ADMIN / PACIENTE / OFICIAL ADMINISTRATIVO)
+      // ------------------------------------------------
+      // Login per CPF (PACIENTE / OFICIAL ADMINISTRATIVO)
+      // Admin only via /loginAdmin
+      // ------------------------------------------------
       user = await User.findOne({ where: { cpf } });
 
-      if (
-        !user ||
-        !["ADMIN", "PACIENTE", "OFICIAL ADMINISTRATIVO"].includes(user.role)
-      ) {
+      const allowedRolesForCpf = ["PACIENTE", "OFICIAL ADMINISTRATIVO"];
+
+      if (!user || !allowedRolesForCpf.includes(user.role)) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
     }
 
+    // Check if user is active
     if (!user.is_active) {
       return res.status(403).json({ message: "User is inactive" });
     }
 
+    // Pass check
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
