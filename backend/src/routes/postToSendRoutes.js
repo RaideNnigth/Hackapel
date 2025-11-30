@@ -1,5 +1,8 @@
+// routes/postToSendRoutes.js
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { requireRoles } from "../middlewares/roleMiddleware.js";
+
 import {
   listAllPostsToSend,
   addPostToSend,
@@ -10,19 +13,39 @@ import {
 
 const router = Router();
 
-// Listar todos
-router.get("/", authMiddleware, listAllPostsToSend);
+/**
+ * Get all posts to send
+ * ADMIN only
+ */
+router.get("/", authMiddleware, requireRoles("ADMIN"), listAllPostsToSend);
 
-// Adicionar
-router.post("/", authMiddleware, addPostToSend);
+/**
+ * Create a new post to send
+ * ADMIN only
+ */
+router.post("/", authMiddleware, requireRoles("ADMIN"), addPostToSend);
 
-// Editar
-router.put("/:id", authMiddleware, editPostToSend);
+/**
+ * Edit an existing post to send
+ * ADMIN only
+ */
+router.put("/:id", authMiddleware, requireRoles("ADMIN"), editPostToSend);
 
-// Deletar
-router.delete("/:id", authMiddleware, deletePostToSend);
+/**
+ * Delete a post to send
+ * ADMIN only
+ */
+router.delete("/:id", authMiddleware, requireRoles("ADMIN"), deletePostToSend);
 
-// Enviar agora (chama Job futuramente)
-router.post("/:id/send-now", authMiddleware, sendNowPostToSend);
+/**
+ * Trigger immediate sending of a post
+ * ADMIN only
+ */
+router.post(
+  "/:id/send-now",
+  authMiddleware,
+  requireRoles("ADMIN"),
+  sendNowPostToSend
+);
 
 export default router;

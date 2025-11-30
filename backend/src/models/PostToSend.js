@@ -38,6 +38,19 @@ const PostToSend = sequelize.define(
       allowNull: false,
       defaultValue: "informative",
     },
+    // Internal status of the notification
+    // PENDING = Detected, waiting to be sent
+    // SENT = already sent
+    // ERROR = Error occurred during sending
+    notificationStatus: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      defaultValue: "PENDING",
+      field: "notification_status",
+      validate: {
+        isIn: [["PENDING", "SENT", "ERROR"]],
+      },
+    }
   },
   {
     tableName: "posts_to_send",

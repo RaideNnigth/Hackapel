@@ -67,7 +67,7 @@ const Notification = sequelize.define(
     },
 
     // situacao da agenda no GERCON
-    // AGENDA_CONFIRMADA, TRANSFERIDA, AGENDADA, REALIZADA, FALTANTE, LIVRE, CANCELADA, BLOQUEADA, AGENDA_CONFIRMADA
+    // AGENDA_CONFIRMADA, TRANSFERIDA, AGENDADA, REALIZADA, FALTANTE, LIVRE, CANCELADA, BLOQUEADA
     scheduleStatus: {
       type: DataTypes.STRING(50),
       allowNull: false,
@@ -82,7 +82,6 @@ const Notification = sequelize.define(
           "LIVRE",
           "CANCELADA",
           "BLOQUEADA",
-          "AGENDA_CONFIRMADA" // sim, a doc cita duplicado
         ]],
       },
     },
