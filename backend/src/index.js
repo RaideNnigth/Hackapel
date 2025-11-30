@@ -40,7 +40,8 @@ app.use("/api/auth", authRoutes);
 async function start() {
   try {
     await testConnection();
-    await sequelize.sync(); // para dev: cria/ajusta tabelas (cuidado em prod)
+    await sequelize.sync({ alter: true });
+    console.log("All models synchronized");
     app.listen(PORT, () => {
       console.log(`Backend running on http://localhost:${PORT}`);
     });

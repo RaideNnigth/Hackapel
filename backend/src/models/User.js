@@ -32,7 +32,7 @@ const User = sequelize.define(
     // Is used for most users beside UBS and Hospital/Lab
     cpf: {
       type: DataTypes.STRING(11),
-      allowNull: false,
+      allowNull: true,
       unique: true,
       validate: {
         isNumeric: true,
@@ -43,7 +43,7 @@ const User = sequelize.define(
     // Is used for UBS and Hospital/Lab users
     cnes: {
         type: DataTypes.STRING(255),
-        allowNull: false,
+        allowNull: true,
         unique: true,
         validate: {
           isNumeric: true,

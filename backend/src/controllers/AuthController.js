@@ -113,9 +113,7 @@ export async function registerPaciente(req, res) {
     email,
     password,
     cpf,
-    cnes,
     role = "PACIENTE",
-    cns,
     phone_number,
     address_street,
     address_number,
@@ -126,23 +124,20 @@ export async function registerPaciente(req, res) {
     address_zipcode,
   } = req.body;
 
-  // Campos mínimos obrigatórios
+  // Minimum required fields
   if (!full_name || !password) {
     return res.status(400).json({
       message: "full_name and password are required",
     });
   }
 
-  // De acordo com seu model, cpf e cnes são NOT NULL, então exigimos:
+  // CPF for PACIENTE is mandatory
   if (!cpf) {
     return res.status(400).json({ message: "CPF is required" });
   }
-  if (!cnes) {
-    return res.status(400).json({ message: "CNES is required" });
-  }
 
   try {
-    // Verifica unicidade
+    // Uniqueness checks
     if (email) {
       const existingByEmail = await User.findOne({ where: { email } });
       if (existingByEmail) {
@@ -155,11 +150,6 @@ export async function registerPaciente(req, res) {
       return res.status(409).json({ message: "CPF already registered" });
     }
 
-    const existingByCnes = await User.findOne({ where: { cnes } });
-    if (existingByCnes) {
-      return res.status(409).json({ message: "CNES already registered" });
-    }
-
     const password_hash = await bcrypt.hash(password, 10);
 
     const user = await User.create({
@@ -167,8 +157,6 @@ export async function registerPaciente(req, res) {
       email: email || null,
       password_hash,
       cpf,
-      cnes,
-      cns: cns || null,
       phone_number: phone_number || null,
       address_street: address_street || null,
       address_number: address_number || null,
@@ -190,7 +178,6 @@ export async function registerPaciente(req, res) {
         full_name: user.full_name,
         role: user.role,
         cpf: user.cpf,
-        cnes: user.cnes,
       },
     });
   } catch (err) {
