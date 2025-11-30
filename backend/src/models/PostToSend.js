@@ -11,7 +11,7 @@ const PostToSend = sequelize.define(
     },
 
     postTitle: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(500),
       allowNull: false,
     },
 

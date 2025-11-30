@@ -25,59 +25,80 @@ function parseBrDateToISO(brDateStr) {
  *     category: "Saúde",
  *     title: "Ubai Navegantes vacina com reforço para meningite nos fins de semana",
  *     publishedDate: "2025-10-08",
- *     rawDate: "08/10/2025"
+ *     rawDate: "08/10/2025",
+ *     groupLabel: "Último Mês" // texto do grupo (opcional)
  *   },
  *   ...
  * ]
  */
 export async function fetchPelotasInformes() {
-  const response = await axios.get(PELOTAS_INFORMES_URL, {
-    headers: {
-      "User-Agent": "HackapelBot/1.0 (+https://hackapel.local)"
-    },
-  });
-
-  const html = response.data;
-  const $ = cheerio.load(html);
-
-  const informes = [];
-
-  // A estratégia:
-  // - Procurar por <p> que tenham "Data de Publicação:"
-  // - O <p> anterior é o título
-  // - Um <h5>/<h6> acima é a categoria (Saúde, Campanha, etc.)
-  $("p")
-    .filter((_, el) => $(el).text().includes("Data de Publicação"))
-    .each((_, el) => {
-      const $dateP = $(el);
-      const rawText = $dateP.text().trim(); // "Data de Publicação: 08/10/2025"
-      const rawDate = rawText.replace("Data de Publicação:", "").trim();
-      const publishedDate = parseBrDateToISO(rawDate);
-
-      // Título costuma ser o <p> imediatamente anterior
-      const title = $dateP.prev("p").text().trim();
-
-      // Categoria costuma vir em um heading logo acima (h5/h6)
-      let category =
-        $dateP.prevAll("h6").first().text().trim() ||
-        $dateP.prevAll("h5").first().text().trim() ||
-        null;
-
-      if (category) {
-        // Remove ":" final, se tiver
-        category = category.replace(/:\s*$/, "").trim();
-      }
-
-      // Só adiciona se tiver título
-      if (title) {
-        informes.push({
-          category,
-          title,
-          publishedDate,
-          rawDate,
-        });
-      }
+  try {
+    const response = await axios.get(PELOTAS_INFORMES_URL, {
+      headers: {
+        "User-Agent": "HackapelBot/1.0 (+https://hackapel.local)",
+      },
     });
 
-  return informes;
+    const html = response.data;
+    const $ = cheerio.load(html);
+
+    const informes = [];
+
+    // Procura dentro do container principal somente grupos preenchidos
+    $(".container-principal .filtro-grupo[data-preenchido='true']").each(
+      (i, groupEl) => {
+        const $group = $(groupEl);
+
+        // Ex: "Último Mês", "2025", etc.
+        const groupLabel = $group.find(".filter-line span").first().text().trim();
+
+        // Para cada card de informe
+        $group.find(".informes-item").each((j, itemEl) => {
+          const $item = $(itemEl);
+
+          // Categoria (h6)
+          let category = $item
+            .find(".informes-content-header h6")
+            .text()
+            .trim();
+
+          // Remove dois-pontos no final, se houver (ex: "Saúde:" -> "Saúde")
+          category = category.replace(/:\s*$/, "");
+
+          // Título (p dentro de .informes-content-body)
+          const title = $item
+            .find(".informes-content-body p")
+            .text()
+            .replace(/\s+/g, " ")
+            .trim();
+
+          // Texto do rodapé onde está a data
+          const footerText = $item
+            .find(".informes-content-footer p")
+            .text()
+            .replace(/\s+/g, " ")
+            .trim();
+
+          // Pega só a data dd/mm/aaaa
+          const dateMatch = footerText.match(/(\d{2}\/\d{2}\/\d{4})/);
+          const rawDate = dateMatch ? dateMatch[1] : null;
+          const publishedDate = parseBrDateToISO(rawDate);
+
+          informes.push({
+            category,
+            title,
+            publishedDate,
+            rawDate,
+            groupLabel,
+          });
+        });
+      }
+    );
+
+    // ⭐ AQUI é o que estava faltando antes
+    return informes;
+  } catch (error) {
+    console.error("Erro ao buscar informes de Pelotas:", error);
+    return [];
+  }
 }

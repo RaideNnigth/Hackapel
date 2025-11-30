@@ -1,4 +1,5 @@
 import express from "express";
+import cron from "node-cron";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
@@ -7,6 +8,10 @@ import postToSendRoutes from "./routes/postToSendRoutes.js";
 import { testConnection } from "./config/database.js";
 import sequelize from "./config/database.js";
 import pelotasInformesRouter from "./routes/pelotasInformesRoutes.js";
+
+import { syncPelotasInformesToPosts } from "./jobs/pelotasInformesSync.js";
+import { runNotificationDispatchJob  } from "./jobs/notificationDispatchJob.js";
+
 import "./models/User.js";
 
 dotenv.config();
@@ -56,5 +61,29 @@ async function start() {
     console.error("Failed to start server:", err);
   }
 }
-
 start();
+
+// ⏰ Run Pelotas scraper every 3 minutes
+cron.schedule("*/3 * * * *", async () => {
+  console.log("[CRON] Running Pelotas Informes sync job...");
+
+  try {
+    const result = await syncPelotasInformesToPosts();
+    console.log("[CRON] Pelotas sync completed:", result);
+  } catch (error) {
+    console.error("[CRON] Error running syncPelotasInformes:", error);
+  }
+});
+
+// ⏰ Run Notification sender every 3 minutes
+cron.schedule("*/3 * * * *", async () => {
+  console.log("[CRON] Running Notification Sender job...");
+
+  try {
+    const result = await runNotificationDispatchJob ();
+    console.log("[CRON] Notification dispatch completed:", result);
+  } catch (error) {
+    console.error("[CRON] Error running notificationDispatchJob:", error);
+  }
+});
+  

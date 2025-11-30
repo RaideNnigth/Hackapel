@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
 import Notification from "../models/Notification.js";
 import PostToSend from "../models/PostToSend.js";
-import EmailService from "../services/emailService";
+import { EmailService } from "../services/emailService.js";
 import User from "../models/User.js";
 
 // If you already have a real email service, import it here:

@@ -1,6 +1,6 @@
-const transporter = require("./mailer");
+import transporter from "./mailer.js";
 
-async function sendEmail({ to, subject, text, html }) {
+export async function EmailService({ to, subject, text, html }) {
   return transporter.sendMail({
     from: `"Meu Sistema" <${process.env.SMTP_USER}>`,
     to,
@@ -9,5 +9,3 @@ async function sendEmail({ to, subject, text, html }) {
     html,
   });
 }
-
-module.exports = { sendEmail };
