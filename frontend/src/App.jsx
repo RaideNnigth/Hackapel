@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import AdminLogin from "./pages/AdminLogin";
 import CriarPlanilha from "./pages/CriarPlanilha";
+import PatientDashboard from "./pages/PatientDashboard";
 
 export default function App() {
   return (
@@ -10,6 +11,7 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/planilha" element={<CriarPlanilha />} />
+        <Route path="/patient/dashboard" element={<PatientDashboard />} />
       </Routes>
     </BrowserRouter>
   );
