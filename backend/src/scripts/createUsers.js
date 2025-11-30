@@ -21,13 +21,13 @@ const USERS_TO_SEED = [
   // 2. PATIENT 1
   {
     role: "PACIENTE",
-    full_name: "João da Silva",
-    email: "joao.paciente@example.com",
+    full_name: "Rávilon",
+    email: "ravilon.ads@inf.edu.ufpel.br",
     plainPassword: "User123!",
     cpf: "11122233344", // 11 digits
     cnes: null, 
     cns: "123456789012345", // 15 digits
-    phone_number: "5553988888888",
+    phone_number: "53991898269",
     address_street: "Rua das Flores",
     address_number: "123",
     address_neighborhood: "Centro",
