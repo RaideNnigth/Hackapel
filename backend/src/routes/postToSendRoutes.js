@@ -16,7 +16,7 @@ const router = Router();
  * Get all posts to send
  * ADMIN only
  */
-router.get("/", authMiddleware, requireRoles("ADMIN"), listAllPostsToSend);
+router.get("/", authMiddleware, requireRoles("ADMIN", "PACIENTE"), listAllPostsToSend);
 
 /**
  * Create a new post to send
