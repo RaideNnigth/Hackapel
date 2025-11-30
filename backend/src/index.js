@@ -6,6 +6,7 @@ import notificationRotes from "./routes/notificationRoutes.js"
 import postToSendRoutes from "./routes/postToSendRoutes.js";
 import { testConnection } from "./config/database.js";
 import sequelize from "./config/database.js";
+import pelotasInformesRouter from "./routes/pelotasInformes.routes.js";
 import "./models/User.js";
 
 dotenv.config();
@@ -39,6 +40,8 @@ app.get("/api/health", async (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/notification", notificationRotes);
 app.use("/api/posts-to-send", postToSendRoutes);
+app.use("/api", pelotasInformesRouter);
+
 
 // Start server after DB sync
 async function start() {
